@@ -34,5 +34,6 @@ final class TabBarController: UITabBarController {
         ]
 
         view.backgroundColor = .systemBackground
+        tabBar.unselectedItemTintColor = .closeButton
     }
 }

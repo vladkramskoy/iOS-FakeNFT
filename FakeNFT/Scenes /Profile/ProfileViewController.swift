@@ -92,9 +92,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             view.addSubview($0)
         }
         
-        //TODO: - add custom cell
         tableView.register(
-            UITableViewCell.self,
+            ProfileTableCell.self,
             forCellReuseIdentifier: cellReuseIdentifier
         )
         
@@ -161,6 +160,10 @@ extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         54
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 
 //MARK: - UITableViewDataSource
@@ -170,15 +173,14 @@ extension ProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //TODO: - use custom cell
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: cellReuseIdentifier,
             for: indexPath
-        ) as? UITableViewCell else {
-            print(#fileID, #function, #line)
+        ) as? ProfileTableCell else {
             return UITableViewCell()
         }
-        cell.textLabel?.text = presenter.getTextCell(number: indexPath.row)
+        let text = presenter.getTextCell(number: indexPath.row)
+        cell.setTextInCell(text: text)
         return cell
     }
 }
