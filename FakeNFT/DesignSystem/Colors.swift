@@ -53,6 +53,12 @@ extension UIColor {
         : .yaBlackLight
     }
 
+    static let backgroundColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackLight
+        : .yaBlackDark
+    }
+
     static let segmentInactive = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaLightGrayDark
