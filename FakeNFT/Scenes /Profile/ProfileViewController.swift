@@ -55,6 +55,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     private let tableView: UITableView = {
         let view = UITableView()
         view.backgroundColor = .backgroundColor
+        view.separatorStyle = .none
         return view
     }()
     
@@ -116,7 +117,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         NSLayoutConstraint.activate([
             editProfileButton.widthAnchor.constraint(equalToConstant: 42),
             editProfileButton.heightAnchor.constraint(equalToConstant: 42),
-            editProfileButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 2),
+            editProfileButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2),
             editProfileButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -9)
         ])
     }

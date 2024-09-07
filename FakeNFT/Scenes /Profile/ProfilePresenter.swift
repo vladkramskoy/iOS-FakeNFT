@@ -19,15 +19,18 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     let arrayTextCell = [
         NSLocalizedString(
-            "profile.myNFT",
+            "Profile.myNFT",
+            tableName: "Profile",
             comment: "Text cell in table"
         ),
         NSLocalizedString(
-            "profile.favoriteNFT",
+            "Profile.favoriteNFT",
+            tableName: "Profile",
             comment: "Text cell in table"
         ),
         NSLocalizedString(
-            "profile.about.developer",
+            "Profile.about.developer",
+            tableName: "Profile",
             comment: "Text cell in table"
         )
     ]

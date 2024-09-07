@@ -6,6 +6,6 @@
   
 */
 
-"profile.myNFT" = "Мои NFT"
-"profile.favoriteNFT" = "Избранные NFT"
-"profile.about.developer" = "О разработчике"
+"Profile.myNFT" = "Мои NFT";
+"Profile.favoriteNFT" = "Избранные NFT";
+"Profile.about.developer" = "О разработчике";
