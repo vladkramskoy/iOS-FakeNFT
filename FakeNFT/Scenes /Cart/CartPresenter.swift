@@ -12,11 +12,13 @@ protocol CartPresenterProtocol: AnyObject {
     
     func loadData()
     func didTapDeleteButton(cell: CartTableViewCell)
+    func calculateTotalPrice() -> Float
 }
 
 final class CartPresenter: CartPresenterProtocol {
     private weak var view: CartViewControllerProtocol?
     private let servicesAssembly: ServicesAssembly
+    
     var data: [CartNft] = []
     
     init(view: CartViewControllerProtocol, servicesAssembly: ServicesAssembly) {
@@ -40,5 +42,9 @@ final class CartPresenter: CartPresenterProtocol {
         let deleteViewController = DeleteViewController(image: cell.nftImageView.image ?? UIImage())
         deleteViewController.modalPresentationStyle = .overFullScreen
         view?.navigateToDeleteViewController(viewController: deleteViewController)
+    }
+    
+    func calculateTotalPrice() -> Float {
+        return data.reduce(0) { $0 + $1.price }
     }
 }
