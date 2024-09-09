@@ -13,9 +13,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let catalogController = TestCatalogViewController(
-            servicesAssembly: servicesAssembly
-        )
+        let catalogController = NftCatalogViewController()
         catalogController.tabBarItem = catalogTabBarItem
 
         viewControllers = [catalogController]
