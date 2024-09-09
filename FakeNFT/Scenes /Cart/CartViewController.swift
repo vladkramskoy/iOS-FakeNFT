@@ -75,6 +75,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter?.loadData()
         setupUI()
         setupNavigationBar()
     }
@@ -88,7 +89,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         paymentAreaView.addSubview(sumLabel)
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: payButton.topAnchor, constant: -16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -136,11 +137,10 @@ extension CartViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.identifier, for: indexPath) as? CartTableViewCell else {
             return UITableViewCell()
         }
+        
         if let presenter = presenter {
-            let nft = presenter.nftForIndexPath(at: indexPath)
-            cell.configure(with: "\(nft)")
-        } else {
-            cell.configure(with: "Unknown NFT")
+            let nft = presenter.data[indexPath.row]
+            cell.configure(image: nft.image, name: nft.name, rating: nft.rating, price: "\(nft.price) ETH")
         }
         cell.backgroundColor = UIColor(named: "whiteObjectColor")
         cell.selectionStyle = .none
