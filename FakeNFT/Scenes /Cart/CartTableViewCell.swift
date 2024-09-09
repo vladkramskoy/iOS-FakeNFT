@@ -12,19 +12,13 @@ final class CartTableViewCell: UITableViewCell {
     
     private var nftRating: Int = 0
     
+    var onDeleteButtonTapped: (() -> Void)?
+    
     private lazy var containerView: UIView = {
         let containerView = UIView()
         containerView.backgroundColor = UIColor(named: "whiteObjectColor")
         containerView.translatesAutoresizingMaskIntoConstraints = false
         return containerView
-    }()
-    
-    private lazy var nftImageView: UIImageView = {
-        let nftImageView = UIImageView()
-        nftImageView.layer.cornerRadius = 12
-        nftImageView.layer.masksToBounds = true
-        nftImageView.translatesAutoresizingMaskIntoConstraints = false
-        return nftImageView
     }()
     
     private lazy var nameLabel: UILabel = {
@@ -35,7 +29,7 @@ final class CartTableViewCell: UITableViewCell {
         return nameLabel
     }()
     
-    lazy var ratingStackView: UIStackView = {
+    private lazy var ratingStackView: UIStackView = {
         let ratingStackView = UIStackView()
         ratingStackView.axis = .horizontal
         ratingStackView.distribution = .fill
@@ -62,7 +56,7 @@ final class CartTableViewCell: UITableViewCell {
         return priceValueLabel
     }()
     
-    lazy var deleteButton: UIButton = {
+    private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton(type: .custom)
         if let image = UIImage(named: "deleteCartIcon")?.withRenderingMode(.alwaysTemplate) {
                 deleteButton.setImage(image, for: .normal)
@@ -71,6 +65,14 @@ final class CartTableViewCell: UITableViewCell {
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         return deleteButton
+    }()
+    
+    lazy var nftImageView: UIImageView = {
+        let nftImageView = UIImageView()
+        nftImageView.layer.cornerRadius = 12
+        nftImageView.layer.masksToBounds = true
+        nftImageView.translatesAutoresizingMaskIntoConstraints = false
+        return nftImageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -117,15 +119,6 @@ final class CartTableViewCell: UITableViewCell {
             deleteButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
     }
-
-    func configure(image: UIImage, name: String, rating: Int, price: String) {
-        nftImageView.image = image
-        nameLabel.text = name
-        nftRating = rating
-        priceValueLabel.text = price
-        
-        setupRatingStars()
-    }
     
     private func setupRatingStars() {
         for i in 0..<5 {
@@ -144,8 +137,16 @@ final class CartTableViewCell: UITableViewCell {
         }
     }
     
+    func configure(image: UIImage, name: String, rating: Int, price: String) {
+        nftImageView.image = image
+        nameLabel.text = name
+        nftRating = rating
+        priceValueLabel.text = price
+        
+        setupRatingStars()
+    }
+    
     @objc private func deleteButtonTapped() {
-        //TODO: - process code
-        print("delete button tapped")
+        onDeleteButtonTapped?()
     }
 }

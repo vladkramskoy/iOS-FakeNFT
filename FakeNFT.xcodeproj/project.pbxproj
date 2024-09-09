@@ -47,6 +47,7 @@
 		8D790BC32C8DCE3200445920 /* CartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D790BC22C8DCE3200445920 /* CartTableViewCell.swift */; };
 		8D790BC52C8E0E9500445920 /* CartPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D790BC42C8E0E9500445920 /* CartPresenter.swift */; };
 		8DBD9C242C8F5F890086E935 /* CartNft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBD9C232C8F5F890086E935 /* CartNft.swift */; };
+		8DBD9C262C8F8F460086E935 /* DeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DBD9C252C8F8F460086E935 /* DeleteViewController.swift */; };
 		E19CD5AB2A98B56600CA39A5 /* NftImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */; };
 		E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */; };
 		E1CD40DC2A96BECC00BE7FE8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E1CD40DB2A96BECC00BE7FE8 /* Localizable.strings */; };
@@ -112,6 +113,7 @@
 		8D790BC22C8DCE3200445920 /* CartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewCell.swift; sourceTree = "<group>"; };
 		8D790BC42C8E0E9500445920 /* CartPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartPresenter.swift; sourceTree = "<group>"; };
 		8DBD9C232C8F5F890086E935 /* CartNft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartNft.swift; sourceTree = "<group>"; };
+		8DBD9C252C8F8F460086E935 /* DeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteViewController.swift; sourceTree = "<group>"; };
 		E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		E1CD40D82A96BE7D00BE7FE8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				8D790BBE2C8DB84300445920 /* CartViewController.swift */,
 				8D790BC22C8DCE3200445920 /* CartTableViewCell.swift */,
 				8D790BC42C8E0E9500445920 /* CartPresenter.swift */,
+				8DBD9C252C8F8F460086E935 /* DeleteViewController.swift */,
 			);
 			path = Cart;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
+				8DBD9C262C8F8F460086E935 /* DeleteViewController.swift in Sources */,
 				3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */,
 				8DBD9C242C8F5F890086E935 /* CartNft.swift in Sources */,
 				0CFCB7422A78013E0009A829 /* Nft.swift in Sources */,

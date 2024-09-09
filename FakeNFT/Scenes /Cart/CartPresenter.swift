@@ -11,6 +11,7 @@ protocol CartPresenterProtocol: AnyObject {
     var data: [CartNft] { get }
     
     func loadData()
+    func didTapDeleteButton(cell: CartTableViewCell)
 }
 
 final class CartPresenter: CartPresenterProtocol {
@@ -33,5 +34,11 @@ final class CartPresenter: CartPresenterProtocol {
         data = [nft1, nft2, nft3]
         
         view?.updateView()
+    }
+    
+    func didTapDeleteButton(cell: CartTableViewCell) {
+        let deleteViewController = DeleteViewController(image: cell.nftImageView.image ?? UIImage())
+        deleteViewController.modalPresentationStyle = .overFullScreen
+        view?.navigateToDeleteViewController(viewController: deleteViewController)
     }
 }

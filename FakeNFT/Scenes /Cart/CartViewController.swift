@@ -9,6 +9,7 @@ import UIKit
 
 protocol CartViewControllerProtocol: AnyObject {
     func updateView()
+    func navigateToDeleteViewController(viewController: UIViewController)
 }
 
 final class CartViewController: UIViewController, CartViewControllerProtocol {
@@ -71,6 +72,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     func updateView() {
         tableView.reloadData()
+    }
+    
+    func navigateToDeleteViewController(viewController: UIViewController) {
+        present(viewController, animated: true)
     }
 
     override func viewDidLoad() {
@@ -141,7 +146,12 @@ extension CartViewController: UITableViewDataSource {
         if let presenter = presenter {
             let nft = presenter.data[indexPath.row]
             cell.configure(image: nft.image, name: nft.name, rating: nft.rating, price: "\(nft.price) ETH")
+            cell.onDeleteButtonTapped = { [weak self] in
+                guard self != nil else { return }
+                presenter.didTapDeleteButton(cell: cell)
+            }
         }
+
         cell.backgroundColor = UIColor(named: "whiteObjectColor")
         cell.selectionStyle = .none
         return cell
