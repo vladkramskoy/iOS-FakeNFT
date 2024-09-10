@@ -13,7 +13,7 @@ final class NftCatalogViewController: UIViewController {
     
     private lazy var nftTableView: UITableView = {
         let tableView = UITableView()
-        tableView.register(NftCatalogCell.self, forCellReuseIdentifier: NftCatalogCell.nftCatalogCellIdentifier)
+        tableView.register(NftCatalogCell.self)
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
         tableView.dataSource = self
@@ -41,7 +41,7 @@ extension NftCatalogViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: NftCatalogCell.nftCatalogCellIdentifier, for: indexPath) as? NftCatalogCell else { return UITableViewCell() }
+        let cell: NftCatalogCell = tableView.dequeueReusableCell()
         return cell
     }
     

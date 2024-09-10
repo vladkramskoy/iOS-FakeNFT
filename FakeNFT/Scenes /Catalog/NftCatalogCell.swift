@@ -7,7 +7,6 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
     //MARK: - UIConstants
     private enum UIConstants {
         static let nftCollectionImageViewCornerRadius: CGFloat = 12
-        static let nftCountLabelFontSize: CGFloat = 17
     }
     
     //MARK: - Static properties
@@ -24,7 +23,7 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
     private lazy var nftCountLabel: UILabel = {
         let label = UILabel()
         label.text = "Peach (1)"
-        label.font = .boldSystemFont(ofSize: UIConstants.nftCountLabelFontSize)
+        label.font = UIFont.bodyBold
         return label
     }()
     
