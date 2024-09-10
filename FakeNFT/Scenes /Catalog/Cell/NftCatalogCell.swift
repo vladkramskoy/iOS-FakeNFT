@@ -9,20 +9,17 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
         static let nftCollectionImageViewCornerRadius: CGFloat = 12
     }
     
-    //MARK: - Static properties
-    static let nftCatalogCellIdentifier = "nftCatalogCell"
-    
     //MARK: - UIModels
     private lazy var nftCollectionImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .nftCollectionMock)
         imageView.layer.cornerRadius = UIConstants.nftCollectionImageViewCornerRadius
+        imageView.clipsToBounds = true
         return imageView
     }()
     
     private lazy var nftCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "Peach (1)"
         label.font = UIFont.bodyBold
         return label
     }()
@@ -37,7 +34,14 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }}
+    }
+    
+    //MARK: - Public func
+    func configure(with cellModel: NftCatalogCellModel) {
+        nftCollectionImageView.kf.setImage(with: cellModel.cover)
+        nftCountLabel.text = "\(cellModel.name) (\(cellModel.nfts.count))"
+    }
+}
 
 //MARK: - AutoLayout
 extension NftCatalogCell {

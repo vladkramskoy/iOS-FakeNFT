@@ -1,8 +1,18 @@
 
 import UIKit
 
+protocol NftCatalogView: AnyObject, ErrorView, LoadingView {
+    func displayCells(_ cellModels: [NftCatalogCellModel])
+}
+
 //MARK: - CatalogViewController
 final class NftCatalogViewController: UIViewController {
+    
+    //MARK: - Private properties
+    private let presenter: NftCatalogPresenter
+    private var cellModels: [NftCatalogCellModel] = []
+    
+    internal lazy var activityIndicator = UIActivityIndicatorView()
     
     //MARK: - UIModels
     private lazy var sortButton: UIButton = {
@@ -21,11 +31,22 @@ final class NftCatalogViewController: UIViewController {
         return tableView
     }()
     
+    //MARK: - Init
+    init(presenter: NftCatalogPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //MARK: - LifyCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        presenter.viewDidLoad()
     }
 }
 
@@ -33,22 +54,24 @@ final class NftCatalogViewController: UIViewController {
 extension NftCatalogViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        4
+        return cellModels.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: NftCatalogCell = tableView.dequeueReusableCell()
+        let cellModel = cellModels[indexPath.section]
+        cell.configure(with: cellModel)
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 8
     }
-
+    
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footerView = UIView()
         footerView.backgroundColor = .clear
@@ -63,17 +86,26 @@ extension NftCatalogViewController: UITableViewDelegate {
     }
 }
 
+extension NftCatalogViewController: NftCatalogView {
+    func displayCells(_ cellModels: [NftCatalogCellModel]) {
+        self.cellModels = cellModels
+        nftTableView.reloadData()
+    }
+}
+
 //MARK: - AutoLayout
 extension NftCatalogViewController {
     private func setupViews() {
         [sortButton,
-         nftTableView].forEach {
+         nftTableView,
+         activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view?.addSubview($0)
         }
     }
     
     private func setupConstraints() {
+        
         NSLayoutConstraint.activate([
             sortButton.heightAnchor.constraint(equalToConstant: 42),
             sortButton.widthAnchor.constraint(equalToConstant: 42),
@@ -85,5 +117,6 @@ extension NftCatalogViewController {
             nftTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nftTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
+        activityIndicator.constraintCenters(to: view)
     }
 }
