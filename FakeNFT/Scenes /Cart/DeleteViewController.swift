@@ -7,8 +7,10 @@
 
 import UIKit
 
-final class DeleteViewController: UIViewController {
-    let image: UIImage
+protocol DeleteViewProtocol: AnyObject {}
+
+final class DeleteViewController: UIViewController, DeleteViewProtocol {
+    var presenter: DeletePresenterProtocol?
     
     private lazy var containerView: UIView = {
         let containerView = UIView()
@@ -19,7 +21,7 @@ final class DeleteViewController: UIViewController {
     
     lazy var nftImageView: UIImageView = {
         let nftImageView = UIImageView()
-        nftImageView.image = image
+        nftImageView.image = presenter?.image
         nftImageView.layer.cornerRadius = 12
         nftImageView.layer.masksToBounds = true
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -75,15 +77,6 @@ final class DeleteViewController: UIViewController {
         setupUI()
     }
     
-    init(image: UIImage) {
-        self.image = image
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private func setupUI() {
         view.backgroundColor = UIColor.clear
         view.insertSubview(blurEffectView, at: 0)
@@ -124,8 +117,8 @@ final class DeleteViewController: UIViewController {
     }
     
     @objc private func deleteButtonTapped() {
-        //TODO: - process code
-        print("delete button tapped")
+        presenter?.handleDeleteButtonTapped()
+        dismiss(animated: true, completion: nil)
     }
     
     @objc private func cancelButtonTapped() {

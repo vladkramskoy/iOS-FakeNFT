@@ -11,8 +11,9 @@ protocol CartPresenterProtocol: AnyObject {
     var data: [CartNft] { get }
     
     func loadData()
-    func didTapDeleteButton(cell: CartTableViewCell)
+    func didTapDeleteButton(image: UIImage, id: String)
     func calculateTotalPrice() -> Float
+    func removePositionFromCart(id: String)
 }
 
 final class CartPresenter: CartPresenterProtocol {
@@ -51,7 +52,6 @@ final class CartPresenter: CartPresenterProtocol {
                                 
                                 if let cartNft = cartNft {
                                     self.data.append(cartNft)
-                                    print("\(cartNft)")
                                 } else {
                                     print("Error when converting NFT")
                                 }
@@ -88,13 +88,43 @@ final class CartPresenter: CartPresenterProtocol {
         fetchCartNfts()
     }
     
-    func didTapDeleteButton(cell: CartTableViewCell) {
-        let deleteViewController = DeleteViewController(image: cell.nftImageView.image ?? UIImage())
+    func didTapDeleteButton(image: UIImage, id: String) {
+        let deleteViewController = DeleteViewController()
+        let deletePresenter = DeletePresenter(view: deleteViewController, servicesAssembly: servicesAssembly, image: image, id: id)
+        deletePresenter.removePositionClosure = self.getRemovePositionClosure()
+        deleteViewController.presenter = deletePresenter
         deleteViewController.modalPresentationStyle = .overFullScreen
         view?.navigateToDeleteViewController(viewController: deleteViewController)
     }
     
     func calculateTotalPrice() -> Float {
-        return data.reduce(0) { $0 + $1.price }
+        let price: Float = data.reduce(0) { $0 + $1.price }
+        let roundedPrice = round(price * 10000) / 10000
+        return roundedPrice
+    }
+    
+    func removePositionFromCart(id: String) {
+        view?.showLoading()
+        servicesAssembly.orderService.deleteNftRequest(withId: id, from: data) { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let updateData):
+                self.data = updateData
+                view?.updateView()
+                view?.hideLoading()
+                
+                print("Позиция \(id) удалена")
+            case .failure(_):
+                view?.hideLoading()
+                view?.showDeletionErrorAlert()
+            }
+        }
+    }
+    
+    func getRemovePositionClosure() -> (String) -> Void {
+        return { [weak self] id in
+            self?.removePositionFromCart(id: id)
+        }
     }
 }

@@ -10,8 +10,10 @@ import UIKit
 protocol CartViewControllerProtocol: AnyObject {
     func updateView()
     func navigateToDeleteViewController(viewController: UIViewController)
+    func showLoading()
     func hideLoading()
     func showErrorAlert()
+    func showDeletionErrorAlert()
 }
 
 final class CartViewController: UIViewController, CartViewControllerProtocol {
@@ -96,7 +98,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     func showErrorAlert() {
         DispatchQueue.main.async {
-            let alertController = UIAlertController(title: "Не удалось загрузить товары", message: "", preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Отмена", style: .default) { _ in }
             let retryAction = UIAlertAction(title: "Повторить", style: .cancel) { [weak self] _ in
                 guard let self else { return }
@@ -105,6 +107,17 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
             
             alertController.addAction(cancelAction)
             alertController.addAction(retryAction)
+            
+            self.present(alertController, animated: true)
+        }
+    }
+    
+    func showDeletionErrorAlert() {
+        DispatchQueue.main.async {
+            let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
+            
+            alertController.addAction(cancelAction)
             
             self.present(alertController, animated: true)
         }
@@ -184,7 +197,7 @@ extension CartViewController: UITableViewDataSource {
             cell.configure(image: nft.image, name: nft.name, rating: nft.rating, price: "\(nft.price) ETH")
             cell.onDeleteButtonTapped = { [weak self] in
                 guard self != nil else { return }
-                presenter.didTapDeleteButton(cell: cell)
+                presenter.didTapDeleteButton(image: nft.image, id: nft.id)
             }
         }
 
@@ -201,7 +214,12 @@ extension CartViewController: UITableViewDelegate {
 }
 
 extension CartViewController {
-    private func showLoading() {
+    private func loadData() {
+        showLoading()
+        presenter?.loadData()
+    }
+    
+    func showLoading() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
             self.view.isUserInteractionEnabled = false
@@ -213,11 +231,6 @@ extension CartViewController {
             self.activityIndicator.stopAnimating()
             self.view.isUserInteractionEnabled = true
         }
-    }
-    
-    private func loadData() {
-        showLoading()
-        presenter?.loadData()
     }
 }
 

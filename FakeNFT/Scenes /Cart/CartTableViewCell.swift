@@ -123,6 +123,8 @@ final class CartTableViewCell: UITableViewCell {
     }
     
     private func setupRatingStars() {
+        ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
         for i in 0..<5 {
             let ratingImageView = UIImageView()
             
