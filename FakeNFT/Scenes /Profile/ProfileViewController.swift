@@ -6,14 +6,17 @@
 //
 
 import UIKit
+import Kingfisher
 
-protocol ProfileViewControllerProtocol: AnyObject {
-    
+protocol ProfileViewControllerProtocol: AnyObject, LoadingView {
+    func updateProfile()
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     //MARK: - Visual Components
+    var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
+    
     private lazy var editProfileButton: UIButton = {
         guard let image = UIImage(named: "edit") else {
             assertionFailure("error create image editProfileButton")
@@ -25,6 +28,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             action: #selector(clickEditProfileButton)
         )
         view.tintColor = .closeButton
+        view.isHidden = true
         return view
     }()
     
@@ -32,6 +36,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         let view = UIImageView()
         view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 35
+        view.isHidden = true
         return view
     }()
     
@@ -40,6 +45,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         view.textColor = .closeButton
         view.font = .headline3
         view.textAlignment = .left
+        view.isHidden = true
         return view
     }()
     
@@ -49,6 +55,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         view.font = .caption2
         view.textAlignment = .left
         view.numberOfLines = 0
+        view.isHidden = true
         return view
     }()
     
@@ -56,6 +63,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         let view = UITableView()
         view.backgroundColor = .backgroundColor
         view.separatorStyle = .none
+        view.isHidden = true
         return view
     }()
     
@@ -86,7 +94,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             imageProfile,
             userName,
             userDescription,
-            tableView
+            tableView,
+            activityIndicator
         ].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -100,11 +109,40 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         tableView.delegate = self
         tableView.dataSource = self
         
+        activityIndicator.constraintCenters(to: view)
         addConstraintEditProfileButton()
         addConstraintImageProfile()
         addConstraintUserName()
         addConstraintUserDescription()
         addConstraintTableView()
+        
+        self.showLoading()
+        presenter.loadProfile()
+        updateProfile()
+    }
+    
+    func updateProfile() {
+        if let profile: ProfileData = presenter.profileService.getProfileStorage().getProfileData() {
+            let url = URL(string: profile.avatar)
+            let processor = RoundCornerImageProcessor(cornerRadius: 70)
+            imageProfile.kf.setImage(
+                with: url,
+                options: [.processor(processor)]
+            )
+            userName.text = profile.name
+            userDescription.text = profile.description
+            tableView.reloadData()
+            [
+                editProfileButton,
+                imageProfile,
+                userName,
+                userDescription,
+                tableView
+            ].forEach{
+                $0.isHidden = false
+            }
+            self.hideLoading()
+        }
     }
     
     //MARK: - Private Methods
@@ -133,7 +171,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     private func addConstraintUserName(){
         NSLayoutConstraint.activate([
             userName.centerYAnchor.constraint(equalTo: imageProfile.centerYAnchor),
-            userName.leadingAnchor.constraint(equalTo: imageProfile.leadingAnchor, constant: 16)
+            userName.leadingAnchor.constraint(equalTo: imageProfile.trailingAnchor, constant: 16)
         ])
     }
     
