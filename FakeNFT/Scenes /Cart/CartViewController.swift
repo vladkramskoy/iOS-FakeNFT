@@ -10,6 +10,8 @@ import UIKit
 protocol CartViewControllerProtocol: AnyObject {
     func updateView()
     func navigateToDeleteViewController(viewController: UIViewController)
+    func hideLoading()
+    func showErrorAlert()
 }
 
 final class CartViewController: UIViewController, CartViewControllerProtocol {
@@ -71,17 +73,46 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         return paymentAreaView
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
     func updateView() {
-        tableView.reloadData()
+        let updateSum = presenter?.calculateTotalPrice() ?? Float()
+        let updateCountNft = presenter?.data.count ?? Int()
+        
+        DispatchQueue.main.async {
+            self.nftCountLabel.text = "\(updateCountNft) NFT"
+            self.sumLabel.text = "\(updateSum) ETH"
+            self.tableView.reloadData()
+        }
     }
     
     func navigateToDeleteViewController(viewController: UIViewController) {
         present(viewController, animated: true)
     }
-
+    
+    func showErrorAlert() {
+        DispatchQueue.main.async {
+            let alertController = UIAlertController(title: "Не удалось загрузить товары", message: "", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Отмена", style: .default) { _ in }
+            let retryAction = UIAlertAction(title: "Повторить", style: .cancel) { [weak self] _ in
+                guard let self else { return }
+                self.loadData()
+            }
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(retryAction)
+            
+            self.present(alertController, animated: true)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.loadData()
+        loadData()
         setupUI()
         setupNavigationBar()
     }
@@ -90,6 +121,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         view.backgroundColor = UIColor(named: "whiteObjectColor")
         view.addSubview(tableView)
         view.addSubview(paymentAreaView)
+        view.addSubview(activityIndicator)
         paymentAreaView.addSubview(payButton)
         paymentAreaView.addSubview(nftCountLabel)
         paymentAreaView.addSubview(sumLabel)
@@ -114,7 +146,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
             
             sumLabel.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
             sumLabel.trailingAnchor.constraint(equalTo: payButton.leadingAnchor, constant: -24),
-            sumLabel.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16)
+            sumLabel.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
@@ -165,5 +200,25 @@ extension CartViewController: UITableViewDelegate {
     }
 }
 
+extension CartViewController {
+    private func showLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+            self.view.isUserInteractionEnabled = false
+        }
+    }
+    
+    func hideLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+        }
+    }
+    
+    private func loadData() {
+        showLoading()
+        presenter?.loadData()
+    }
+}
 
 

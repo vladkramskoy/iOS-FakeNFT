@@ -18,24 +18,74 @@ protocol CartPresenterProtocol: AnyObject {
 final class CartPresenter: CartPresenterProtocol {
     private weak var view: CartViewControllerProtocol?
     private let servicesAssembly: ServicesAssembly
+    private let orderService: OrderService
     
     var data: [CartNft] = []
     
     init(view: CartViewControllerProtocol, servicesAssembly: ServicesAssembly) {
         self.view = view
         self.servicesAssembly = servicesAssembly
+        self.orderService = servicesAssembly.orderService
+    }
+    
+    private func fetchCartNfts() {
+        orderService.fetchOrderNfts { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let nftIds):
+                guard !nftIds.isEmpty else {
+                    self.view?.hideLoading()
+                    return
+                }
+                var remainingRequests = nftIds.count
+                
+                for nftId in nftIds {
+                    self.orderService.fetchNftDetails(for: nftId) { [weak self] detailResult in
+                        guard let self else { return }
+                        
+                        switch detailResult {
+                        case .success(let nftDetail):
+                            self.orderService.convertToCartNft(from: nftDetail) { [weak self] cartNft in
+                                guard let self else { return }
+                                
+                                if let cartNft = cartNft {
+                                    self.data.append(cartNft)
+                                    print("\(cartNft)")
+                                } else {
+                                    print("Error when converting NFT")
+                                }
+                                
+                                remainingRequests -= 1
+                                if remainingRequests == 0 {
+                                    
+                                    self.view?.hideLoading()
+                                    self.view?.updateView()
+                                }
+                                
+                            }
+                        case .failure(let error):
+                            print("Error in receiving NFT details:", error)
+                            
+                            remainingRequests -= 1
+                            if remainingRequests == 0 {
+                                self.view?.hideLoading()
+                                view?.showErrorAlert()
+                            }
+                        }
+                    }
+                }
+            case .failure(let error):
+                print("Error in receiving NFT details:", error)
+                
+                self.view?.hideLoading()
+                view?.showErrorAlert()
+            }
+        }
     }
     
     func loadData() {
-        //TODO: - process code
-        
-        let nft1 = CartNft(name: "April", image: UIImage(named: "nftMock1") ?? UIImage(), rating: 1, price: 1.78)
-        let nft2 = CartNft(name: "Greena", image: UIImage(named: "nftMock2") ?? UIImage(), rating: 3, price: 1.78)
-        let nft3 = CartNft(name: "Spring", image: UIImage(named: "nftMock3") ?? UIImage(), rating: 5, price: 1.78)
-        
-        data = [nft1, nft2, nft3]
-        
-        view?.updateView()
+        fetchCartNfts()
     }
     
     func didTapDeleteButton(cell: CartTableViewCell) {

@@ -102,6 +102,8 @@ final class CartTableViewCell: UITableViewCell {
             nftImageView.topAnchor.constraint(equalTo: containerView.topAnchor),
             nftImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             nftImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            nftImageView.widthAnchor.constraint(equalToConstant: 108),
+            nftImageView.heightAnchor.constraint(equalToConstant: 108),
             
             nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
             nameLabel.leadingAnchor.constraint(equalTo: nftImageView.trailingAnchor, constant: 20),

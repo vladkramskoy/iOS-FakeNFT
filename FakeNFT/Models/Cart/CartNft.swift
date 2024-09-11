@@ -12,4 +12,5 @@ struct CartNft {
     let image: UIImage
     let rating: Int
     let price: Float
+    let id: String
 }
