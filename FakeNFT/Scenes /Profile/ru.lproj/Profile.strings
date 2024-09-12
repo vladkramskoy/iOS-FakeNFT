@@ -1,0 +1,11 @@
+/* 
+  Profile.strings
+  FakeNFT
+
+  Created by gimon on 07.09.2024.
+  
+*/
+
+"Profile.myNFT" = "Мои NFT";
+"Profile.favoriteNFT" = "Избранные NFT";
+"Profile.about.developer" = "О разработчике";
