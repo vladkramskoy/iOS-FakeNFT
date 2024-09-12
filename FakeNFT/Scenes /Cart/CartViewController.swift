@@ -85,7 +85,9 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         let updateSum = presenter?.calculateTotalPrice() ?? Float()
         let updateCountNft = presenter?.data.count ?? Int()
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
             self.nftCountLabel.text = "\(updateCountNft) NFT"
             self.sumLabel.text = "\(updateSum) ETH"
             self.tableView.reloadData()
@@ -97,7 +99,9 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     }
     
     func showErrorAlert() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
             let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Отмена", style: .default) { _ in }
             let retryAction = UIAlertAction(title: "Повторить", style: .cancel) { [weak self] _ in
@@ -113,7 +117,9 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     }
     
     func showDeletionErrorAlert() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
             let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
             
@@ -220,14 +226,18 @@ extension CartViewController {
     }
     
     func showLoading() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
             self.activityIndicator.startAnimating()
             self.view.isUserInteractionEnabled = false
         }
     }
     
     func hideLoading() {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
             self.activityIndicator.stopAnimating()
             self.view.isUserInteractionEnabled = true
         }
