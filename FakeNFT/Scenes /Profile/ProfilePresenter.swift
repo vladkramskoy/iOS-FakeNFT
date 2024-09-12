@@ -8,9 +8,9 @@
 import Foundation
 
 protocol ProfilePresenterProtocol {
-    var profileService: ProfileService { get }
-    var viewController: ProfileViewControllerProtocol? {set get}
-    func getCountCell() -> Int
+    var profileData: ProfileData? { get }
+    var viewController: ProfileViewControllerProtocol? { set get }
+    var cellsCount: Int { get }
     func getTextCell(number: Int) -> String
     func loadProfile()
 }
@@ -19,42 +19,29 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     weak var viewController: ProfileViewControllerProtocol?
     
-    var profileService: ProfileService
+    lazy var cellsCount: Int = arrayTextCell.count
+    var profileData: ProfileData? {
+        profileService.getProfileStorage().getProfileData()
+    }
     
+    private var profileService: ProfileService
     private let arrayTextCell = [
-        NSLocalizedString(
-            "Profile.myNFT",
-            tableName: "Profile",
-            comment: "Text cell in table"
-        ),
-        NSLocalizedString(
-            "Profile.favoriteNFT",
-            tableName: "Profile",
-            comment: "Text cell in table"
-        ),
-        NSLocalizedString(
-            "Profile.about.developer",
-            tableName: "Profile",
-            comment: "Text cell in table"
-        )
+        LocalizedText.myNFT,
+        LocalizedText.favoriteNFT,
+        LocalizedText.aboutDeveloper
     ]
     
     init(servicesAssembler: ServicesAssembly) {
         self.profileService = servicesAssembler.profileService
     }
     
-    func getCountCell() -> Int {
-        arrayTextCell.count
-    }
-    
     func getTextCell(number: Int) -> String {
-        var result = ""
-        let profile = profileService.getProfileStorage().getProfileData()
+        var result: String
         switch number {
         case 0 :
-            result = arrayTextCell[number] + " (\(profile?.nfts.count ?? 0))"
+            result = arrayTextCell[number] + " (\(profileData?.nfts.count ?? 0))"
         case 1 :
-            result = arrayTextCell[number] + " (\(profile?.likes.count ?? 0))"
+            result = arrayTextCell[number] + " (\(profileData?.likes.count ?? 0))"
         default:
             result = arrayTextCell[number]
         }
@@ -62,7 +49,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
     
     func loadProfile() {
-        profileService.loadProfile(){ result in
+        profileService.loadProfile() { result in
             switch result {
             case .success :
                 DispatchQueue.main.async {[weak self] in

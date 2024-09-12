@@ -32,15 +32,16 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         return view
     }()
     
-    private let imageProfile: UIImageView = {
+    private lazy var imageProfile: UIImageView = {
         let view = UIImageView()
         view.backgroundColor = .backgroundColor
         view.layer.cornerRadius = 35
+        view.clipsToBounds = true
         view.isHidden = true
         return view
     }()
     
-    private let userName: UILabel = {
+    private lazy var userName: UILabel = {
         let view = UILabel()
         view.textColor = .closeButton
         view.font = .headline3
@@ -49,7 +50,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         return view
     }()
     
-    private let userDescription: UILabel = {
+    private lazy var userDescription: UILabel = {
         let view = UILabel()
         view.textColor = .closeButton
         view.font = .caption2
@@ -59,7 +60,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         return view
     }()
     
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let view = UITableView()
         view.backgroundColor = .backgroundColor
         view.separatorStyle = .none
@@ -122,7 +123,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     }
     
     func updateProfile() {
-        if let profile: ProfileData = presenter.profileService.getProfileStorage().getProfileData() {
+        if let profile: ProfileData = presenter.profileData {
             let url = URL(string: profile.avatar)
             let processor = RoundCornerImageProcessor(cornerRadius: 70)
             imageProfile.kf.setImage(
@@ -151,45 +152,113 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     }
     
     private func addConstraintEditProfileButton(){
-        NSLayoutConstraint.activate([
-            editProfileButton.widthAnchor.constraint(equalToConstant: 42),
-            editProfileButton.heightAnchor.constraint(equalToConstant: 42),
-            editProfileButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2),
-            editProfileButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -9)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                editProfileButton.widthAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.widthButton
+                ),
+                editProfileButton.heightAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.heightButton
+                ),
+                editProfileButton.topAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
+                    constant: ConstantsConstraint.topButtonOffset
+                ),
+                editProfileButton.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -ConstantsConstraint.trailingButtonOffset
+                )
+            ]
+        )
     }
     
     private func addConstraintImageProfile(){
-        NSLayoutConstraint.activate([
-            imageProfile.widthAnchor.constraint(equalToConstant: 70),
-            imageProfile.heightAnchor.constraint(equalToConstant: 70),
-            imageProfile.topAnchor.constraint(equalTo: editProfileButton.bottomAnchor, constant: 20),
-            imageProfile.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                imageProfile.widthAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.widthImage
+                ),
+                imageProfile.heightAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.heightImage
+                ),
+                imageProfile.topAnchor.constraint(
+                    equalTo: editProfileButton.bottomAnchor,
+                    constant: ConstantsConstraint.topImageOffset
+                ),
+                imageProfile.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: ConstantsConstraint.defaultOffset
+                )
+            ]
+        )
     }
     
     private func addConstraintUserName(){
-        NSLayoutConstraint.activate([
-            userName.centerYAnchor.constraint(equalTo: imageProfile.centerYAnchor),
-            userName.leadingAnchor.constraint(equalTo: imageProfile.trailingAnchor, constant: 16)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                userName.centerYAnchor.constraint(
+                    equalTo: imageProfile.centerYAnchor
+                ),
+                userName.leadingAnchor.constraint(
+                    equalTo: imageProfile.trailingAnchor,
+                    constant: ConstantsConstraint.defaultOffset
+                )
+            ]
+        )
     }
     
     private func addConstraintUserDescription(){
-        NSLayoutConstraint.activate([
-            userDescription.topAnchor.constraint(equalTo: imageProfile.bottomAnchor, constant: 20),
-            userDescription.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            userDescription.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                userDescription.topAnchor.constraint(
+                    equalTo: imageProfile.bottomAnchor,
+                    constant: ConstantsConstraint.topDescriptionOffset
+                ),
+                userDescription.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: ConstantsConstraint.defaultOffset
+                ),
+                userDescription.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: -ConstantsConstraint.defaultOffset
+                )
+            ]
+        )
     }
     
     private func addConstraintTableView(){
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: userDescription.bottomAnchor, constant: 40),
-            tableView.heightAnchor.constraint(equalToConstant: 162),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                tableView.topAnchor.constraint(
+                    equalTo: userDescription.bottomAnchor,
+                    constant: ConstantsConstraint.topTableOffset
+                ),
+                tableView.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor
+                ),
+                tableView.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor
+                ),
+                tableView.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor
+                )
+            ]
+        )
+    }
+}
+
+extension ProfileViewController {
+    private enum ConstantsConstraint {
+        static let defaultOffset: CGFloat = 16
+        static let widthButton: CGFloat = 42
+        static let heightButton: CGFloat = 42
+        static let topButtonOffset: CGFloat = 2
+        static let trailingButtonOffset: CGFloat = 9
+        static let widthImage: CGFloat = 70
+        static let heightImage: CGFloat = 70
+        static let topImageOffset: CGFloat = 20
+        static let topDescriptionOffset: CGFloat = 20
+        static let topTableOffset: CGFloat = 40
     }
 }
 
@@ -207,7 +276,7 @@ extension ProfileViewController: UITableViewDelegate {
 //MARK: - UITableViewDataSource
 extension ProfileViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.getCountCell()
+        presenter.cellsCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

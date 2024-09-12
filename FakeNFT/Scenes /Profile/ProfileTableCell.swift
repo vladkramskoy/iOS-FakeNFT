@@ -49,22 +49,41 @@ final class ProfileTableCell: UITableViewCell {
     
     // MARK: - Public Methods
     func setTextInCell(text: String) {
-        print(#fileID, #function, #line)
         textLabelCell.text = text
     }
     
     // MARK: - Private Methods
     private func addConstraintTextLabelCell() {
-        NSLayoutConstraint.activate([
-            textLabelCell.centerYAnchor.constraint(equalTo: centerYAnchor),
-            textLabelCell.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                textLabelCell.centerYAnchor.constraint(
+                    equalTo: centerYAnchor
+                ),
+                textLabelCell.leadingAnchor.constraint(
+                    equalTo: leadingAnchor,
+                    constant: ConstantsConstraint.defaultOffset
+                )
+            ]
+        )
     }
     
     private func addConstraintImageChevron() {
-        NSLayoutConstraint.activate([
-            imageChevron.centerYAnchor.constraint(equalTo: centerYAnchor),
-            imageChevron.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                imageChevron.centerYAnchor.constraint(
+                    equalTo: centerYAnchor
+                ),
+                imageChevron.trailingAnchor.constraint(
+                    equalTo: trailingAnchor,
+                    constant: -ConstantsConstraint.defaultOffset
+                )
+            ]
+        )
+    }
+}
+
+extension ProfileTableCell {
+    private enum ConstantsConstraint {
+        static let defaultOffset: CGFloat = 16
     }
 }
