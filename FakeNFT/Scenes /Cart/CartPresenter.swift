@@ -9,18 +9,20 @@ import UIKit
 
 protocol CartPresenterProtocol: AnyObject {
     var cartNfts: [CartNft] { get }
+    var servicesAssembly: ServicesAssembly { get }
     
     func loadData()
     func didTapDeleteButton(image: UIImage, id: String)
     func calculateTotalPrice() -> Float
     func removePositionFromCart(id: String)
+    func handlePaymentButtonTapped()
 }
 
 final class CartPresenter: CartPresenterProtocol {
     var cartNfts: [CartNft] = []
+    let servicesAssembly: ServicesAssembly
     
     private weak var view: CartViewControllerProtocol?
-    private let servicesAssembly: ServicesAssembly
     private let orderService: OrderService
     
     init(view: CartViewControllerProtocol, servicesAssembly: ServicesAssembly) {
@@ -131,5 +133,14 @@ final class CartPresenter: CartPresenterProtocol {
         return { [weak self] id in
             self?.removePositionFromCart(id: id)
         }
+    }
+    
+    func handlePaymentButtonTapped() {
+        let paymentViewController = PaymentViewController()
+        let paymentPresenter = PaymentPresenter(view: paymentViewController, servicesAssembly: self.servicesAssembly)
+        paymentViewController.title = "Выберите способ оплаты"
+        paymentViewController.hidesBottomBarWhenPushed = true
+        paymentViewController.presenter = paymentPresenter
+        self.view?.navigateToPaymentViewController(viewController: paymentViewController)
     }
 }
