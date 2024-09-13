@@ -10,9 +10,9 @@ import UIKit
 final class CartTableViewCell: UITableViewCell {
     static let identifier = "CustomTableViewCell"
     
-    private var nftRating: Int = 0
-    
     var onDeleteButtonTapped: (() -> Void)?
+    
+    private var nftRating: Int = 0
     
     private lazy var containerView: UIView = {
         let containerView = UIView()

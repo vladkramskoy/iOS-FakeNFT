@@ -76,7 +76,12 @@ final class OrderService {
                 return
             }
             
-            let cartNft = CartNft(name: nftDetail.name, image: image, rating: nftDetail.rating, price: nftDetail.price, id: nftDetail.id)
+            let cartNft = CartNft(name: nftDetail.name,
+                                  image: image,
+                                  rating: nftDetail.rating,
+                                  price: nftDetail.price,
+                                  id: nftDetail.id)
+            
             completion(cartNft)
             
         }.resume()

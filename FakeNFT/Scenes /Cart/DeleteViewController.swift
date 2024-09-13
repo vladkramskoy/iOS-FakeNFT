@@ -12,13 +12,6 @@ protocol DeleteViewProtocol: AnyObject {}
 final class DeleteViewController: UIViewController, DeleteViewProtocol {
     var presenter: DeletePresenterProtocol?
     
-    private lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.backgroundColor = UIColor.clear
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        return containerView
-    }()
-    
     lazy var nftImageView: UIImageView = {
         let nftImageView = UIImageView()
         nftImageView.image = presenter?.image
@@ -26,6 +19,13 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
         nftImageView.layer.masksToBounds = true
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
         return nftImageView
+    }()
+    
+    private lazy var containerView: UIView = {
+        let containerView = UIView()
+        containerView.backgroundColor = UIColor.clear
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        return containerView
     }()
     
     private lazy var messageLabel: UILabel = {

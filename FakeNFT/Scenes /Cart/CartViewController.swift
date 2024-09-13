@@ -19,6 +19,9 @@ protocol CartViewControllerProtocol: AnyObject {
 final class CartViewController: UIViewController, CartViewControllerProtocol {
     var presenter: CartPresenterProtocol?
     
+    private let currencySymbol = "ETH"
+    private let nftLabel = "NFT"
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,7 +48,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     private lazy var nftCountLabel: UILabel = {
         let nftCountLabel = UILabel()
         if let presenter = presenter {
-            nftCountLabel.text = "\(presenter.data.count) NFT"
+            nftCountLabel.text = "\(presenter.cartNfts.count) \(nftLabel)"
         } else {
             nftCountLabel.text = "0 NFT"
         }
@@ -83,7 +86,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     func updateView() {
         let updateSum = presenter?.calculateTotalPrice() ?? Float()
-        let updateCountNft = presenter?.data.count ?? Int()
+        let updateCountNft = presenter?.cartNfts.count ?? Int()
         
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -99,31 +102,31 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     }
     
     func showErrorAlert() {
+        let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.loadData()
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(retryAction)
+        
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            
-            let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Отмена", style: .default) { _ in }
-            let retryAction = UIAlertAction(title: "Повторить", style: .cancel) { [weak self] _ in
-                guard let self else { return }
-                self.loadData()
-            }
-            
-            alertController.addAction(cancelAction)
-            alertController.addAction(retryAction)
             
             self.present(alertController, animated: true)
         }
     }
     
     func showDeletionErrorAlert() {
+        let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
+        
+        alertController.addAction(cancelAction)
+        
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            
-            let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
-            
-            alertController.addAction(cancelAction)
             
             self.present(alertController, animated: true)
         }
@@ -190,7 +193,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter?.data.count ?? 0
+        return presenter?.cartNfts.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -199,8 +202,17 @@ extension CartViewController: UITableViewDataSource {
         }
         
         if let presenter = presenter {
-            let nft = presenter.data[indexPath.row]
-            cell.configure(image: nft.image, name: nft.name, rating: nft.rating, price: "\(nft.price) ETH")
+            guard indexPath.row >= 0 && indexPath.row < presenter.cartNfts.count else {
+                return UITableViewCell()
+            }
+            
+            let nft = presenter.cartNfts[indexPath.row]
+            
+            cell.configure(image: nft.image, 
+                           name: nft.name,
+                           rating: nft.rating,
+                           price: "\(nft.price) \(currencySymbol)")
+            
             cell.onDeleteButtonTapped = { [weak self] in
                 guard self != nil else { return }
                 presenter.didTapDeleteButton(image: nft.image, id: nft.id)

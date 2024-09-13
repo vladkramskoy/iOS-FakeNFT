@@ -2,7 +2,7 @@ import UIKit
 
 final class TabBarController: UITabBarController {
 
-    var servicesAssembly: ServicesAssembly!
+    var servicesAssembly: ServicesAssembly?
 
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
@@ -18,7 +18,9 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        guard let servicesAssembly = self.servicesAssembly else { return }
+        
         let catalogController = TestCatalogViewController(
             servicesAssembly: servicesAssembly
         )
