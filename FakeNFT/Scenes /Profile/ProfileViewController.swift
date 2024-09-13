@@ -125,11 +125,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     func updateProfile() {
         if let profile: ProfileData = presenter.profileData {
             let url = URL(string: profile.avatar)
-            let processor = RoundCornerImageProcessor(cornerRadius: 70)
-            imageProfile.kf.setImage(
-                with: url,
-                options: [.processor(processor)]
-            )
+            imageProfile.kf.setImage(with: url)
             userName.text = profile.name
             userDescription.text = profile.description
             tableView.reloadData()
