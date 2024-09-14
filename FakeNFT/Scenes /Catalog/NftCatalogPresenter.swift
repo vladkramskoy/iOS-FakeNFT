@@ -1,53 +1,51 @@
+
 import Foundation
 
-// MARK: - Protocol
-
-protocol NftDetailPresenter {
+//MARK: - Protocol
+protocol NftCatalogPresenter {
     func viewDidLoad()
 }
 
-// MARK: - State
-
-enum NftDetailState {
-    case initial, loading, failed(Error), data(Nft)
+//MARK: - State
+enum NftCatalogState {
+    case initial, loading, failed(Error), data([NftCollections])
 }
 
-final class NftDetailPresenterImpl: NftDetailPresenter {
+//MARK: - NftCatalogPresenterImpl
+final class NftCatalogPresenterImpl: NftCatalogPresenter {
     
-    // MARK: - Properties
-    
-    weak var view: NftDetailView?
-    private let input: NftDetailInput
+    //MARK: - Private Properties
     private let service: NftService
-    private var state = NftDetailState.initial {
+    private var state = NftCatalogState.initial {
         didSet {
             stateDidChanged()
         }
     }
     
-    // MARK: - Init
+    //MARK: - Public Properties
+    weak var view: NftCatalogView?
     
-    init(input: NftDetailInput, service: NftService) {
-        self.input = input
+    //MARK: - Init
+    init(service: NftService) {
         self.service = service
     }
     
-    // MARK: - Functions
-    
+    //MARK: - Public Functions
     func viewDidLoad() {
         state = .loading
     }
     
+    //MARK: - Private Functions
     private func stateDidChanged() {
         switch state {
         case .initial:
             assertionFailure("can't move to initial state")
         case .loading:
             view?.showLoading()
-            loadNft()
-        case .data(let nft):
+            loadNftCollections()
+        case .data(let nftCollections):
             view?.hideLoading()
-            let cellModels = nft.images.map { NftDetailCellModel(url: $0) }
+            let cellModels = nftCollections.map { NftCatalogCellModel(name: $0.name, cover: $0.cover, id: $0.id, nfts: $0.nfts)}
             view?.displayCells(cellModels)
         case .failed(let error):
             let errorModel = makeErrorModel(error)
@@ -56,11 +54,11 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
         }
     }
     
-    private func loadNft() {
-        service.loadNft(id: input.id) { [weak self] result in
+    private func loadNftCollections() {
+        service.loadNftCollections(id: "") { [weak self] result in
             switch result {
-            case .success(let nft):
-                self?.state = .data(nft)
+            case .success(let nftCollections):
+                self?.state = .data(nftCollections)
             case .failure(let error):
                 self?.state = .failed(error)
             }
