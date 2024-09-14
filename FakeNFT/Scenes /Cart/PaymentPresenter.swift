@@ -11,6 +11,7 @@ protocol PaymentPresenterProtocol {
     var cryptocurrencies: [Cryptocurrency] { get }
     
     func getListCryptocurrencies()
+    func handleAgreementButtonTapped()
 }
 
 final class PaymentPresenter: PaymentPresenterProtocol {
@@ -35,5 +36,11 @@ final class PaymentPresenter: PaymentPresenterProtocol {
         self.cryptocurrencies = cryptocurrencies
         
         view?.updateData()
+    }
+    
+    func handleAgreementButtonTapped() {
+        let agreementViewController = AgreementViewController()
+        agreementViewController.hidesBottomBarWhenPushed = true
+        self.view?.navigateToAgreementViewController(viewController: agreementViewController)
     }
 }

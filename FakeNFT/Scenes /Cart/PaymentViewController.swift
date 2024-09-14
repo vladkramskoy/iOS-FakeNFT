@@ -9,6 +9,7 @@ import UIKit
 
 protocol PaymentViewControllerProtocol: AnyObject {
     func updateData()
+    func navigateToAgreementViewController(viewController: UIViewController)
 }
 
 final class PaymentViewController: UIViewController, PaymentViewControllerProtocol {
@@ -40,29 +41,25 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         return payButton
     }()
     
-    private lazy var agreementTextView: UITextView = {
-        let agreementTextView = UITextView()
-        let text = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения"
-        let attributedString = NSMutableAttributedString(string: text)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 4
-        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attributedString.length))
-        
-        if let range = text.range(of: "Пользовательского соглашения") {
-            let nsRange = NSRange(range, in: text)
-            
-            attributedString.addAttribute(.link, value: "https://yandex.ru/legal/practicum_termsofuse/", range: nsRange)
-        }
-        
-        agreementTextView.backgroundColor = UIColor(named: "paymentAreaColor")
-        agreementTextView.attributedText = attributedString
-        agreementTextView.isEditable = false
-        agreementTextView.isScrollEnabled = false
-        agreementTextView.dataDetectorTypes = .link
-        agreementTextView.textColor = UIColor(named: "darkObjectColor")
-        agreementTextView.font = UIFont.systemFont(ofSize: 13)
-        agreementTextView.translatesAutoresizingMaskIntoConstraints = false
-        return agreementTextView
+    private lazy var agreementLabel: UILabel = {
+        let agreementLabel = UILabel()
+        agreementLabel.text = "Совершая покупку, вы соглашаетесь с условиями"
+        agreementLabel.textColor = UIColor(named: "darkObjectColor")
+        agreementLabel.font = UIFont.systemFont(ofSize: 13)
+        agreementLabel.translatesAutoresizingMaskIntoConstraints = false
+        return agreementLabel
+    }()
+    
+    private lazy var agreementButton: UIButton = {
+        let agreementButton = UIButton(type: .system)
+        agreementButton.setTitle("Пользовательского соглашения", for: .normal)
+        agreementButton.contentHorizontalAlignment = .left
+        agreementButton.tintColor = .systemBlue
+        agreementButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        agreementButton.addTarget(self, action: #selector(agreementButtonTapped), for: .touchUpInside)
+        agreementButton.backgroundColor = .clear
+        agreementButton.translatesAutoresizingMaskIntoConstraints = false
+        return agreementButton
     }()
     
     private lazy var paymentAreaView: UIView = {
@@ -87,9 +84,9 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         view.backgroundColor = UIColor(named: "whiteObjectColor")
         view.addSubview(collectionView)
         view.addSubview(paymentAreaView)
-        paymentAreaView.addSubview(agreementTextView)
+        paymentAreaView.addSubview(agreementLabel)
+        paymentAreaView.addSubview(agreementButton)
         paymentAreaView.addSubview(payButton)
-        
 
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -102,9 +99,13 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
             paymentAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             paymentAreaView.heightAnchor.constraint(equalToConstant: 186),
             
-            agreementTextView.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
-            agreementTextView.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
-            agreementTextView.bottomAnchor.constraint(equalTo: payButton.topAnchor, constant: -16),
+            agreementLabel.topAnchor.constraint(equalTo: paymentAreaView.topAnchor, constant: 16),
+            agreementLabel.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
+            agreementLabel.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
+            
+            agreementButton.topAnchor.constraint(equalTo: agreementLabel.bottomAnchor),
+            agreementButton.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
+            agreementButton.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
             
             payButton.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
             payButton.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
@@ -124,12 +125,20 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         collectionView.reloadData()
     }
     
+    func navigateToAgreementViewController(viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     @objc func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
     
     @objc private func payButtonTapped() {
         print("pay button tapped")
+    }
+    
+    @objc private func agreementButtonTapped() {
+        presenter.handleAgreementButtonTapped()
     }
 }
 
