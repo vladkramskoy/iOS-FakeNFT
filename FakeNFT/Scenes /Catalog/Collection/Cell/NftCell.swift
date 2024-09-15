@@ -9,12 +9,16 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
         static let nftImageViewCornerRadius: CGFloat = 12
     }
     
-    private let nftRating = 5
-    
     //MARK: - UIModels
+    private lazy var placeholderImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "photo")
+        imageView.tintColor = .gray
+        return imageView
+    }()
+    
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(resource: .nftCardMock)
         imageView.layer.cornerRadius = UIConstants.nftImageViewCornerRadius
         imageView.clipsToBounds = true
         return imageView
@@ -39,14 +43,12 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     private lazy var nftName: UILabel = {
         let label = UILabel()
         label.font = .bodyBold
-        label.text = "Archie"
         return label
     }()
     
     private lazy var priceLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.font = .bodyMedium
-        label.text = "1 ETH"
         return label
     }()
     
@@ -61,14 +63,22 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
         super.init(frame: frame)
         setupViews()
         setConstraints()
-        setupRatingStars()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupRatingStars() {
+    //MARK: - Public Properties
+    func configure(cellModel: NftCellModel) {
+        nftName.text = cellModel.name
+        priceLabel.text = "\(cellModel.price) ETH"
+        nftImageView.kf.setImage(with: cellModel.images.first)
+        setupRatingStars(cellModel.rating)
+    }
+    
+    //MARK: - Private Properties
+    private func setupRatingStars(_ nftRating: Int) {
         ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         for i in 0..<5 {
@@ -91,7 +101,8 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
 //MARK: - AutoLayout
 extension NftCell {
     private func setupViews() {
-        [nftImageView,
+        [placeholderImageView,
+         nftImageView,
          ratingStackView,
          nftName,
          priceLabel,
@@ -106,6 +117,11 @@ extension NftCell {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
+            placeholderImageView.widthAnchor.constraint(equalToConstant: frame.width),
+            placeholderImageView.heightAnchor.constraint(equalTo: placeholderImageView.widthAnchor),
+            placeholderImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            placeholderImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            
             nftImageView.widthAnchor.constraint(equalToConstant: frame.width),
             nftImageView.heightAnchor.constraint(equalTo: nftImageView.widthAnchor),
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -119,6 +135,7 @@ extension NftCell {
             ratingStackView.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 8),
             ratingStackView.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             
+            nftName.widthAnchor.constraint(equalTo: ratingStackView.widthAnchor),
             nftName.topAnchor.constraint(equalTo: ratingStackView.bottomAnchor, constant: 5),
             nftName.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             

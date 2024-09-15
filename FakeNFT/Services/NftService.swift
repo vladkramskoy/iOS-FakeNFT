@@ -1,11 +1,13 @@
 import Foundation
 
 typealias NftCompletion = (Result<Nft, Error>) -> Void
-typealias NftCollectionsCompletion = (Result<[NftCollections], Error>) -> Void
+typealias NftCollectionsCompletion = (Result<[NftCollection], Error>) -> Void
+typealias NftCollectionCompletion = (Result<NftCollection, Error>) -> Void
 
 protocol NftService {
     func loadNft(id: String, completion: @escaping NftCompletion)
-    func loadNftCollections(id: String, completion: @escaping NftCollectionsCompletion)
+    func loadNftCollections(completion: @escaping NftCollectionsCompletion)
+    func loadNftCollection(id: String, completion: @escaping NftCollectionCompletion)
 }
 
 final class NftServiceImpl: NftService {
@@ -36,23 +38,41 @@ final class NftServiceImpl: NftService {
                 completion(.failure(error))
             }
         }
-    }    
+    }
     
-    func loadNftCollections(id: String, completion: @escaping NftCollectionsCompletion) {
+    func loadNftCollection(id: String, completion: @escaping NftCollectionCompletion) {
         if let nftCollections = collectionsStorage.getNftCollections(with: id) {
-            completion(.success([nftCollections]))
+            completion(.success(nftCollections))
             return
         }
-        
         let request = NFTCollectionsRequest()
-        networkClient.send(request: request, type: [NftCollections].self) { [weak collectionsStorage] result in
+        networkClient.send(request: request, type: NftCollection.self) { [weak collectionsStorage] result in
             switch result {
-            case .success(let nftCollections):
-                collectionsStorage?.saveNftCollections(nftCollections)
-                completion(.success(nftCollections))
+            case .success(let nftCollection):
+                collectionsStorage?.saveNftCollection(nftCollection)
+                completion(.success(nftCollection))
             case .failure(let error):
                 completion(.failure(error))
             }
         }
     }
+    
+    func loadNftCollections(completion: @escaping NftCollectionsCompletion) {
+        if let nftCollections = collectionsStorage.getAllNftCollections(), !nftCollections.isEmpty {
+            completion(.success(nftCollections))
+        } else {
+            
+            let request = NFTCollectionsRequest()
+            networkClient.send(request: request, type: [NftCollection].self) { [weak collectionsStorage] result in
+                switch result {
+                case .success(let nftCollections):
+                    collectionsStorage?.saveNftCollections(nftCollections)
+                    completion(.success(nftCollections))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
 }

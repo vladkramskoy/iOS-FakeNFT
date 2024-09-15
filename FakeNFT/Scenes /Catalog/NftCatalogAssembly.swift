@@ -12,6 +12,7 @@ public final class NftCatalogAssembly {
         let presenter = NftCatalogPresenterImpl(service: servicesAssembler.nftService)
         let viewController = NftCatalogViewController(presenter: presenter)
         presenter.view = viewController
+        viewController.servicesAssembly = servicesAssembler
         return viewController
     }
 }

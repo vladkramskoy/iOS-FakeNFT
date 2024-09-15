@@ -8,7 +8,7 @@ protocol NftCatalogPresenter {
 
 //MARK: - State
 enum NftCatalogState {
-    case initial, loading, failed(Error), data([NftCollections])
+    case initial, loading, failed(Error), data([NftCollection])
 }
 
 //MARK: - NftCatalogPresenterImpl
@@ -55,7 +55,7 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
     }
     
     private func loadNftCollections() {
-        service.loadNftCollections(id: "") { [weak self] result in
+        service.loadNftCollections { [weak self] result in
             switch result {
             case .success(let nftCollections):
                 self?.state = .data(nftCollections)
