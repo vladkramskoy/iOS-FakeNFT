@@ -12,7 +12,7 @@ final class NftCatalogViewController: UIViewController {
     private let presenter: NftCatalogPresenter
     private var cellModels: [NftCatalogCellModel] = []
     
-    internal lazy var activityIndicator = UIActivityIndicatorView()
+    lazy var activityIndicator = UIActivityIndicatorView()
     
     //MARK: - UIModels
     private lazy var sortButton: UIButton = {
@@ -83,6 +83,11 @@ extension NftCatalogViewController: UITableViewDataSource {
 extension NftCatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 179
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let nftCollectionViewController = NftCollectionViewController()
+        present(nftCollectionViewController, animated: true)
     }
 }
 
