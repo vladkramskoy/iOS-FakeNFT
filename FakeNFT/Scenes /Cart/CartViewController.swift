@@ -63,7 +63,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         let sumLabel = UILabel()
         let sum = presenter?.calculateTotalPrice() ?? Float()
         sumLabel.text = "\(sum) ETH"
-        sumLabel.textColor = UIColor(named: "sumTextColor")
+        sumLabel.textColor = UIColor(named: "greenTextColor")
         sumLabel.font = UIFont.boldSystemFont(ofSize: 17)
         sumLabel.translatesAutoresizingMaskIntoConstraints = false
         return sumLabel

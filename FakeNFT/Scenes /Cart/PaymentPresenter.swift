@@ -27,10 +27,10 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     
     func getListCryptocurrencies() {
         let cryptocurrencies = [
-            Cryptocurrency(title: "Bitcoin", name: "BTC", image: UIImage(), id: "1"),
-            Cryptocurrency(title: "Ethereum", name: "ETH", image: UIImage(), id: "2"),
-            Cryptocurrency(title: "Ripple", name: "XRP", image: UIImage(), id: "3"),
-            Cryptocurrency(title: "Litecoin", name: "LTC", image: UIImage(), id: "4")
+            Cryptocurrency(title: "Bitcoin", name: "BTC", image: UIImage(named: "coinMock1") ?? UIImage(), id: "1"),
+            Cryptocurrency(title: "Dogecoin", name: "DOGE", image: UIImage(named: "coinMock2") ?? UIImage(), id: "2"),
+            Cryptocurrency(title: "Tether", name: "USDT", image: UIImage(named: "coinMock3") ?? UIImage(), id: "3"),
+            Cryptocurrency(title: "Apecoin", name: "APE", image: UIImage(named: "coinMock4") ?? UIImage(), id: "4")
         ]
         
         self.cryptocurrencies = cryptocurrencies

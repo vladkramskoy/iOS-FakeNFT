@@ -15,6 +15,8 @@ protocol PaymentViewControllerProtocol: AnyObject {
 final class PaymentViewController: UIViewController, PaymentViewControllerProtocol {
     var presenter: PaymentPresenterProtocol!
     
+    private var selectedIndexPath: IndexPath?
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 7
@@ -152,17 +154,33 @@ extension PaymentViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        let cryptoName = presenter.cryptocurrencies[indexPath.item].name
-        cell.configure(with: cryptoName)
+        if let presenter = presenter {
+            guard indexPath.row >= 0 && indexPath.row < presenter.cryptocurrencies.count else {
+                return PaymentCollectionViewCell()
+            }
+            
+            let cryptocurrency = presenter.cryptocurrencies[indexPath.row]
+            cell.configure(currencyName: cryptocurrency.title, currencySymbol: cryptocurrency.name, image: cryptocurrency.image)
+        }
         
-        cell.backgroundColor = .gray
+        cell.backgroundColor = UIColor(named: "paymentAreaColor")
         return cell
     }
 }
 
 extension PaymentViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Cell \(indexPath.row) was tapped")
+        if let previousIndexPath = selectedIndexPath {
+            let previousCell = collectionView.cellForItem(at: previousIndexPath)
+            previousCell?.layer.borderWidth = 0
+            previousCell?.layer.borderColor = UIColor.clear.cgColor
+        }
+        
+        let currentCell = collectionView.cellForItem(at: indexPath)
+        currentCell?.layer.borderWidth = 1
+        currentCell?.layer.borderColor = UIColor(named: "darkObjectColor")?.cgColor
+        
+        selectedIndexPath = indexPath
     }
 }
 

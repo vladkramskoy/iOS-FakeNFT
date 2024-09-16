@@ -10,27 +10,64 @@ import UIKit
 final class PaymentCollectionViewCell: UICollectionViewCell {
     static let identifier = "PaymentCollectionViewCell"
     
-    private lazy var label: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var containerView: UIView = {
+        let containerView = UIView()
+        containerView.backgroundColor = UIColor(named: "dark")
+        containerView.layer.cornerRadius = 6
+        containerView.layer.masksToBounds = true
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        return containerView
+    }()
+    
+    private lazy var currencyImageView: UIImageView = {
+        let currencyImageView = UIImageView()
+        currencyImageView.translatesAutoresizingMaskIntoConstraints = false
+        return currencyImageView
+    }()
+    
+    private lazy var currencyNameLabel: UILabel = {
+        let currencyNameLabel = UILabel()
+        currencyNameLabel.textAlignment = .left
+        currencyNameLabel.font = UIFont.systemFont(ofSize: 13)
+        currencyNameLabel.textColor = UIColor(named: "darkObjectColor")
+        currencyNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        return currencyNameLabel
+    }()
+    
+    private lazy var currencySymbolLabel: UILabel = {
+        let currencySymbolLabel = UILabel()
+        currencySymbolLabel.textAlignment = .left
+        currencySymbolLabel.font = UIFont.systemFont(ofSize: 13)
+        currencySymbolLabel.textColor = UIColor(named: "greenTextColor")
+        currencySymbolLabel.translatesAutoresizingMaskIntoConstraints = false
+        return currencySymbolLabel
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        contentView.addSubview(label)
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = UIColor.gray.cgColor
-        contentView.layer.cornerRadius = 8
+        contentView.addSubview(containerView)
+        contentView.addSubview(currencyNameLabel)
+        contentView.addSubview(currencySymbolLabel)
+        containerView.addSubview(currencyImageView)
+        layer.cornerRadius = 12
         
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
+            containerView.widthAnchor.constraint(equalToConstant: 36),
+            containerView.heightAnchor.constraint(equalToConstant: 36),
+            
+            currencyImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 2.5),
+            currencyImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 2.5),
+            currencyImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -2.5),
+            currencyImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -2.5),
+            
+            currencyNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
+            currencyNameLabel.leadingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 4),
+            
+            currencySymbolLabel.leadingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 4),
+            currencySymbolLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
         ])
     }
     
@@ -38,7 +75,9 @@ final class PaymentCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with text: String) {
-        label.text = text
+    func configure(currencyName: String, currencySymbol: String, image: UIImage) {
+        currencyNameLabel.text = currencyName
+        currencySymbolLabel.text = currencySymbol
+        currencyImageView.image = image
     }
 }
