@@ -36,6 +36,11 @@ final class AgreementViewController: UIViewController, WKNavigationDelegate {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.barTintColor = .none
+    }
+    
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "backButton")
         let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(backButtonTapped))
