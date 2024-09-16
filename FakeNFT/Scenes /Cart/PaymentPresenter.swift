@@ -25,17 +25,27 @@ final class PaymentPresenter: PaymentPresenterProtocol {
         self.servicesAssembly = servicesAssembly
     }
     
-    func getListCryptocurrencies() {
-        let cryptocurrencies = [
-            Cryptocurrency(title: "Bitcoin", name: "BTC", image: UIImage(named: "coinMock1") ?? UIImage(), id: "1"),
-            Cryptocurrency(title: "Dogecoin", name: "DOGE", image: UIImage(named: "coinMock2") ?? UIImage(), id: "2"),
-            Cryptocurrency(title: "Tether", name: "USDT", image: UIImage(named: "coinMock3") ?? UIImage(), id: "3"),
-            Cryptocurrency(title: "Apecoin", name: "APE", image: UIImage(named: "coinMock4") ?? UIImage(), id: "4")
-        ]
-        
-        self.cryptocurrencies = cryptocurrencies
-        
-        view?.updateData()
+    func getListCryptocurrencies() {  
+        servicesAssembly.paymentService.fetchCryptocurrcencies { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let cryptocurrencies):
+                guard !cryptocurrencies.isEmpty else {
+                    self.view?.hideLoading()
+                    return
+                }
+                
+                self.cryptocurrencies = cryptocurrencies
+                view?.hideLoading()
+                view?.updateData()
+            case .failure(let error):
+                print("Error in obtaining information about cryptocurrencies:", error)
+                
+                self.view?.hideLoading()
+                self.view?.showErrorAlert()
+            }
+        }
     }
     
     func handleAgreementButtonTapped() {

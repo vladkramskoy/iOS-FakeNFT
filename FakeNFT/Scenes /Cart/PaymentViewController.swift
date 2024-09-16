@@ -9,6 +9,8 @@ import UIKit
 
 protocol PaymentViewControllerProtocol: AnyObject {
     func updateData()
+    func hideLoading()
+    func showErrorAlert()
     func navigateToAgreementViewController(viewController: UIViewController)
 }
 
@@ -74,18 +76,25 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         return paymentAreaView
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        loadData()
         setupUI()
         setupNavigationBar()
-        presenter.getListCryptocurrencies()
     }
     
     private func setupUI() {
         view.backgroundColor = UIColor(named: "whiteObjectColor")
         view.addSubview(collectionView)
         view.addSubview(paymentAreaView)
+        view.addSubview(activityIndicator)
         paymentAreaView.addSubview(agreementLabel)
         paymentAreaView.addSubview(agreementButton)
         paymentAreaView.addSubview(payButton)
@@ -112,7 +121,10 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
             payButton.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
             payButton.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
             payButton.bottomAnchor.constraint(equalTo: paymentAreaView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            payButton.heightAnchor.constraint(equalToConstant: 60)
+            payButton.heightAnchor.constraint(equalToConstant: 60),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -124,11 +136,32 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     }
     
     func updateData() {
-        collectionView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.collectionView.reloadData()
+        }
     }
     
     func navigateToAgreementViewController(viewController: UIViewController) {
         navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func showErrorAlert() {
+        let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.loadData()
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(retryAction)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.present(alertController, animated: true)
+        }
     }
     
     @objc func backButtonTapped() {
@@ -160,7 +193,7 @@ extension PaymentViewController: UICollectionViewDataSource {
             }
             
             let cryptocurrency = presenter.cryptocurrencies[indexPath.row]
-            cell.configure(currencyName: cryptocurrency.title, currencySymbol: cryptocurrency.name, image: cryptocurrency.image)
+            cell.configure(currencyName: cryptocurrency.currencyName, currencySymbol: cryptocurrency.currencySymbol, image: cryptocurrency.image)
         }
         
         cell.backgroundColor = UIColor(named: "paymentAreaColor")
@@ -194,3 +227,27 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension PaymentViewController {
+    private func loadData() {
+        showLoading()
+        presenter.getListCryptocurrencies()
+    }
+    
+    func showLoading() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.activityIndicator.startAnimating()
+            self.view.isUserInteractionEnabled = false
+        }
+    }
+    
+    func hideLoading() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+        }
+    }
+}

@@ -8,8 +8,8 @@
 import UIKit
 
 struct Cryptocurrency {
-    let title: String
-    let name: String
+    let currencyName: String
+    let currencySymbol: String
     let image: UIImage
     let id: String
 }

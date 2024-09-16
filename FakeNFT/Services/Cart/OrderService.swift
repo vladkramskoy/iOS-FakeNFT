@@ -108,7 +108,7 @@ final class OrderService {
         var request = URLRequest(url: url)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.addValue("0c1e998a-def2-4ac5-979e-b91c16b62d81", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
         
         request.httpMethod = "PUT"
         request.httpBody = postData
