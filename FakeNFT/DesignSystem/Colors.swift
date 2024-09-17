@@ -35,6 +35,9 @@ extension UIColor {
 
     // Background Colors
     static let background = UIColor.white
+    
+    static let greyUniversal = UIColor(red: 98/255, green: 92/255, blue: 92/255, alpha: 1.0)
+    static let lightGray = UIColor(red: 247/255, green: 247/255, blue: 248/255, alpha: 1.0)
 
     // Text Colors
     static let textPrimary = UIColor.black
