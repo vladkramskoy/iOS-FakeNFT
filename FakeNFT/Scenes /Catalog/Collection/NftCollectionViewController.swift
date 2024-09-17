@@ -47,6 +47,13 @@ final class NftCollectionViewController: UIViewController {
         return imageView
     }()
     
+    private lazy var backwardButton: UIButton = {
+       let button = UIButton()
+        button.setImage(UIImage(resource: .chevron), for: .normal)
+        button.addTarget(self, action: #selector(backToNftCatalogViewController), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var collectionNameLabel: UILabel = {
         let label = UILabel()
         label.font = .headline3
@@ -109,6 +116,10 @@ final class NftCollectionViewController: UIViewController {
     @objc private func didTapAuthorButton() {
         //TODO: Переход на страницу автора
     }
+    
+    @objc private func backToNftCatalogViewController() {
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -166,6 +177,7 @@ extension NftCollectionViewController {
     private func setupViews() {
         [placeholderImageView,
          coverImageView,
+         backwardButton,
          collectionNameLabel,
          authorLabel,
          authorButton,
@@ -188,6 +200,9 @@ extension NftCollectionViewController {
             coverImageView.topAnchor.constraint(equalTo: view.topAnchor),
             coverImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             coverImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            backwardButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            backwardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
             
             collectionNameLabel.topAnchor.constraint(equalTo: coverImageView.bottomAnchor, constant: 16),
             collectionNameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),

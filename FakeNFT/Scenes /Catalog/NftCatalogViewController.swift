@@ -50,6 +50,10 @@ final class NftCatalogViewController: UIViewController {
         setupConstraints()
         presenter.viewDidLoad()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
 }
 
 //MARK: - UITableViewDataSource
@@ -91,7 +95,7 @@ extension NftCatalogViewController: UITableViewDelegate {
         let nftId = cellModels[indexPath.section].id
         let assembly = NftCollectionAssembly(servicesAssembler: servicesAssembly)
         let nftCollectionViewController = assembly.build(with: nftId)
-        present(nftCollectionViewController, animated: true)
+        navigationController?.pushViewController(nftCollectionViewController, animated: true)
     }
     
 }
