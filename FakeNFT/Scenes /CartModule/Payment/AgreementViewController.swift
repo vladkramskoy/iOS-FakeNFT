@@ -9,6 +9,8 @@ import UIKit
 import WebKit
 
 final class AgreementViewController: UIViewController, WKNavigationDelegate {
+    private let agreementURL = "https://yandex.ru/legal/practicum_termsofuse"
+    
     private lazy var webView: WKWebView = {
         let webView = WKWebView()
         webView.backgroundColor = .white
@@ -30,7 +32,7 @@ final class AgreementViewController: UIViewController, WKNavigationDelegate {
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        if let url = URL(string: "https://yandex.ru/legal/practicum_termsofuse") {
+        if let url = URL(string: agreementURL) {
             let request = URLRequest(url: url)
             webView.load(request)
         }
@@ -44,7 +46,7 @@ final class AgreementViewController: UIViewController, WKNavigationDelegate {
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "backButton")
         let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(backButtonTapped))
-        barButtonItem.tintColor = UIColor(named: "dark")
+        barButtonItem.tintColor = UIColor.blackLight
         navigationItem.leftBarButtonItem = barButtonItem
     }
     

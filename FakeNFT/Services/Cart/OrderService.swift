@@ -87,11 +87,6 @@ final class OrderService {
         }.resume()
     }
     
-    private func prepareParametrs(for data: [CartNft]) -> Data? {
-        let parametrs = data.map { "nfts=\($0.id)" }.joined(separator: "&")
-        return parametrs.data(using: .utf8)
-    }
-    
     func deleteNftRequest(withId id: String, from data: [CartNft], completion: @escaping (Result<[CartNft], Error>) -> Void) {
         let updateData = data.filter { $0.id != id }
         
@@ -129,5 +124,10 @@ final class OrderService {
             completion(.success(updateData))
         }
         task.resume()
+    }
+    
+    private func prepareParametrs(for data: [CartNft]) -> Data? {
+        let parametrs = data.map { "nfts=\($0.id)" }.joined(separator: "&")
+        return parametrs.data(using: .utf8)
     }
 }

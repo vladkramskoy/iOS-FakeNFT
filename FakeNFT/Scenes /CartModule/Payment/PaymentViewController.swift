@@ -15,7 +15,7 @@ protocol PaymentViewControllerProtocol: AnyObject {
 }
 
 final class PaymentViewController: UIViewController, PaymentViewControllerProtocol {
-    var presenter: PaymentPresenterProtocol!
+    var presenter: PaymentPresenterProtocol?
     
     private var selectedIndexPath: IndexPath?
     
@@ -25,7 +25,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         layout.minimumInteritemSpacing = 7
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor(named: "whiteObjectColor")
+        collectionView.backgroundColor = UIColor.whiteObjectColor
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(PaymentCollectionViewCell.self, forCellWithReuseIdentifier: PaymentCollectionViewCell.identifier)
@@ -36,11 +36,11 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     private lazy var payButton: UIButton = {
         let payButton = UIButton(type: .system)
         payButton.setTitle("Оплатить", for: .normal)
-        payButton.tintColor = UIColor(named: "whiteObjectColor")
-        payButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
+        payButton.tintColor = UIColor.whiteObjectColor
+        payButton.titleLabel?.font = UIFont.bodyBold
         payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
         payButton.layer.cornerRadius = 16
-        payButton.backgroundColor = UIColor(named: "darkObjectColor")
+        payButton.backgroundColor = UIColor.darkObjectColor
         payButton.translatesAutoresizingMaskIntoConstraints = false
         return payButton
     }()
@@ -48,8 +48,8 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     private lazy var agreementLabel: UILabel = {
         let agreementLabel = UILabel()
         agreementLabel.text = "Совершая покупку, вы соглашаетесь с условиями"
-        agreementLabel.textColor = UIColor(named: "darkObjectColor")
-        agreementLabel.font = UIFont.systemFont(ofSize: 13)
+        agreementLabel.textColor = UIColor.darkObjectColor
+        agreementLabel.font = UIFont.caption2
         agreementLabel.translatesAutoresizingMaskIntoConstraints = false
         return agreementLabel
     }()
@@ -59,7 +59,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         agreementButton.setTitle("Пользовательского соглашения", for: .normal)
         agreementButton.contentHorizontalAlignment = .left
         agreementButton.tintColor = .systemBlue
-        agreementButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        agreementButton.titleLabel?.font = UIFont.caption2
         agreementButton.addTarget(self, action: #selector(agreementButtonTapped), for: .touchUpInside)
         agreementButton.backgroundColor = .clear
         agreementButton.translatesAutoresizingMaskIntoConstraints = false
@@ -68,10 +68,10 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var paymentAreaView: UIView = {
         let paymentAreaView = UIView()
-        paymentAreaView.layer.cornerRadius = 16
+        paymentAreaView.layer.cornerRadius = 12
         paymentAreaView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         paymentAreaView.layer.masksToBounds = true
-        paymentAreaView.backgroundColor = UIColor(named: "paymentAreaColor")
+        paymentAreaView.backgroundColor = UIColor.paymentAreaColor
         paymentAreaView.translatesAutoresizingMaskIntoConstraints = false
         return paymentAreaView
     }()
@@ -90,8 +90,37 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         setupNavigationBar()
     }
     
+    func updateData() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.collectionView.reloadData()
+        }
+    }
+    
+    func navigateToAgreementViewController(viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    func showErrorAlert() {
+        let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.loadData()
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(retryAction)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.present(alertController, animated: true)
+        }
+    }
+    
     private func setupUI() {
-        view.backgroundColor = UIColor(named: "whiteObjectColor")
+        view.backgroundColor = UIColor.whiteObjectColor
         view.addSubview(collectionView)
         view.addSubview(paymentAreaView)
         view.addSubview(activityIndicator)
@@ -131,40 +160,11 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "backButton")
         let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(backButtonTapped))
-        barButtonItem.tintColor = UIColor(named: "darkObjectColor")
+        barButtonItem.tintColor = UIColor.darkObjectColor
         navigationItem.leftBarButtonItem = barButtonItem
     }
     
-    func updateData() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.collectionView.reloadData()
-        }
-    }
-    
-    func navigateToAgreementViewController(viewController: UIViewController) {
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-    
-    func showErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.loadData()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            
-            self.present(alertController, animated: true)
-        }
-    }
-    
-    @objc func backButtonTapped() {
+    @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
     
@@ -173,13 +173,13 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     }
     
     @objc private func agreementButtonTapped() {
-        presenter.handleAgreementButtonTapped()
+        presenter?.handleAgreementButtonTapped()
     }
 }
 
 extension PaymentViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return presenter.cryptocurrencies.count
+        return presenter?.cryptocurrencies.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -196,7 +196,7 @@ extension PaymentViewController: UICollectionViewDataSource {
             cell.configure(currencyName: cryptocurrency.currencyName, currencySymbol: cryptocurrency.currencySymbol, image: cryptocurrency.image)
         }
         
-        cell.backgroundColor = UIColor(named: "paymentAreaColor")
+        cell.backgroundColor = UIColor.paymentAreaColor
         return cell
     }
 }
@@ -211,7 +211,7 @@ extension PaymentViewController: UICollectionViewDelegate {
         
         let currentCell = collectionView.cellForItem(at: indexPath)
         currentCell?.layer.borderWidth = 1
-        currentCell?.layer.borderColor = UIColor(named: "darkObjectColor")?.cgColor
+        currentCell?.layer.borderColor = UIColor.darkObjectColor.cgColor
         
         selectedIndexPath = indexPath
     }
@@ -228,12 +228,16 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension PaymentViewController {
-    private func loadData() {
-        showLoading()
-        presenter.getListCryptocurrencies()
+    func hideLoading() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.activityIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+        }
     }
     
-    func showLoading() {
+    private func showLoading() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             
@@ -242,12 +246,8 @@ extension PaymentViewController {
         }
     }
     
-    func hideLoading() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            
-            self.activityIndicator.stopAnimating()
-            self.view.isUserInteractionEnabled = true
-        }
+    private func loadData() {
+        showLoading()
+        presenter?.getListCryptocurrencies()
     }
 }

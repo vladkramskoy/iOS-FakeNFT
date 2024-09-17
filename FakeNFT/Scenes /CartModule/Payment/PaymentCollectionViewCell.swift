@@ -12,7 +12,7 @@ final class PaymentCollectionViewCell: UICollectionViewCell {
     
     private lazy var containerView: UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = UIColor(named: "dark")
+        containerView.backgroundColor = UIColor.blackLight
         containerView.layer.cornerRadius = 6
         containerView.layer.masksToBounds = true
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,8 +28,8 @@ final class PaymentCollectionViewCell: UICollectionViewCell {
     private lazy var currencyNameLabel: UILabel = {
         let currencyNameLabel = UILabel()
         currencyNameLabel.textAlignment = .left
-        currencyNameLabel.font = UIFont.systemFont(ofSize: 13)
-        currencyNameLabel.textColor = UIColor(named: "darkObjectColor")
+        currencyNameLabel.font = UIFont.caption2
+        currencyNameLabel.textColor = UIColor.darkObjectColor
         currencyNameLabel.translatesAutoresizingMaskIntoConstraints = false
         return currencyNameLabel
     }()
@@ -37,8 +37,8 @@ final class PaymentCollectionViewCell: UICollectionViewCell {
     private lazy var currencySymbolLabel: UILabel = {
         let currencySymbolLabel = UILabel()
         currencySymbolLabel.textAlignment = .left
-        currencySymbolLabel.font = UIFont.systemFont(ofSize: 13)
-        currencySymbolLabel.textColor = UIColor(named: "greenTextColor")
+        currencySymbolLabel.font = UIFont.caption2
+        currencySymbolLabel.textColor = UIColor.textGreen
         currencySymbolLabel.translatesAutoresizingMaskIntoConstraints = false
         return currencySymbolLabel
     }()
