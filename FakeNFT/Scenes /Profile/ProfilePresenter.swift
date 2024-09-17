@@ -13,6 +13,7 @@ protocol ProfilePresenterProtocol {
     var cellsCount: Int { get }
     func getTextCell(number: Int) -> String
     func loadProfile()
+    func editProfile(profile: ProfileData)
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
@@ -25,6 +26,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
     
     private var profileService: ProfileService
+    private var editProfileServices: EditProfileServices
     private let arrayTextCell = [
         LocalizedText.myNFT,
         LocalizedText.favoriteNFT,
@@ -33,6 +35,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     init(servicesAssembler: ServicesAssembly) {
         self.profileService = servicesAssembler.profileService
+        self.editProfileServices = servicesAssembler.editProfileServices
     }
     
     func getTextCell(number: Int) -> String {
@@ -59,5 +62,24 @@ final class ProfilePresenter: ProfilePresenterProtocol {
                 assertionFailure("\(error)")
             }
         }
+    }
+    
+    func editProfile(profile: ProfileData) {
+        viewController?.hideViewElements()
+        editProfileServices.sendEditProfileRequest(
+            name: profile.name,
+            description: profile.description,
+            website: profile.website,
+            avatar: profile.avatar,
+            likes: profile.likes){ result in
+                switch result {
+                case .success :
+                    DispatchQueue.main.async {[weak self] in
+                        self?.viewController?.updateProfile()
+                    }
+                case .failure (let error):
+                    assertionFailure("\(error)")
+                }
+            }
     }
 }

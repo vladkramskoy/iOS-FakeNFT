@@ -10,6 +10,7 @@ import Kingfisher
 
 protocol ProfileViewControllerProtocol: AnyObject, LoadingView {
     func updateProfile()
+    func hideViewElements()
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -142,9 +143,24 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         }
     }
     
+    func hideViewElements() {
+        [
+            editProfileButton,
+            imageProfile,
+            userName,
+            userDescription,
+            tableView
+        ].forEach{
+            $0.isHidden = true
+        }
+        self.showLoading()
+    }
+    
     //MARK: - Private Methods
     @objc private func clickEditProfileButton(){
-        //TODO: - add body
+        let viewController = EditProfileViewController(profilePresenter: presenter)
+        present(viewController, animated: true)
+        
     }
     
     private func addConstraintEditProfileButton(){

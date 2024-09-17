@@ -9,3 +9,10 @@
 "Profile.myNFT" = "Мои NFT";
 "Profile.favoriteNFT" = "Избранные NFT";
 "Profile.about.developer" = "О разработчике";
+"Edit.profile.tittle.name" = "Имя";
+"Edit.profile.tittle.description" = "Описание";
+"Edit.profile.tittle.site" = "Сайт";
+"Edit.profile.tittle.alert" = "Ссылка на изображение";
+"Edit.profile.alert.cancel.button" = "Отмена";
+"Edit.profile.alert.ok.button" = "OK";
+"Edit.profile.alert.placeholder" = "Введите ссылку...";
