@@ -19,6 +19,7 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = UIConstants.nftImageViewCornerRadius
         imageView.clipsToBounds = true
         return imageView
@@ -81,14 +82,10 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     private func setupRatingStars(_ nftRating: Int) {
         ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        for i in 0..<5 {
+        for rating in 0..<5 {
             let ratingImageView = UIImageView()
             
-            if i < nftRating {
-                ratingImageView.image = UIImage(resource: .ratingIcon)
-            } else {
-                ratingImageView.image = UIImage(resource: .ratingIconVoid)
-            }
+            ratingImageView.image = UIImage(resource: rating < nftRating ? .ratingIcon : .ratingIconVoid)
             
             ratingImageView.contentMode = .scaleAspectFit
             ratingImageView.widthAnchor.constraint(equalToConstant: 12).isActive = true

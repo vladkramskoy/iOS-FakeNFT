@@ -9,18 +9,13 @@ protocol NftCollectionView: AnyObject, ErrorView, LoadingView {
 //MARK: - NftCollectionViewController
 final class NftCollectionViewController: UIViewController {
     
-    //MARK: - UIConstants
-    private enum UIConstants {
-        static let coverImageViewCornerRadius: CGFloat = 12
-    }
-    
     //MARK: - Private Properties
     private let params: GeometricParams = {
         let params = GeometricParams(cellCount: 3,
                                      topInset: 0,
-                                     leftInset: 0,
+                                     leftInset: 16,
                                      bottomInset: 8,
-                                     rightInset: 0,
+                                     rightInset: 16,
                                      cellSpacing: 10)
         return params
     }()
@@ -32,21 +27,6 @@ final class NftCollectionViewController: UIViewController {
     lazy var activityIndicator = UIActivityIndicatorView()
     
     //MARK: - UIModels
-    private lazy var placeholderImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "photo")
-        imageView.tintColor = .gray
-        return imageView
-    }()
-    
-    private lazy var coverImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = UIConstants.coverImageViewCornerRadius
-        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        imageView.layer.masksToBounds = true
-        return imageView
-    }()
-    
     private lazy var backwardButton: UIButton = {
        let button = UIButton()
         button.setImage(UIImage(resource: .chevron), for: .normal)
@@ -54,43 +34,15 @@ final class NftCollectionViewController: UIViewController {
         return button
     }()
     
-    private lazy var collectionNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .headline3
-        return label
-    }()
-    
-    
-    private lazy var authorLabel: UILabel = {
-        let label = UILabel()
-        label.font = .caption2
-        label.text = "Автор коллекции:"
-        return label
-    }()
-    
-    private lazy var authorButton: UIButton = {
-        let button = UIButton()
-        button.titleLabel?.font = .caption1
-        button.setTitleColor(.systemBlue, for: .normal)
-        button.contentHorizontalAlignment = .leading
-        button.addTarget(self, action: #selector(didTapAuthorButton), for: .touchUpInside)
-        return button
-    }()
-    
-    private lazy var descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .caption2
-        label.numberOfLines = .bitWidth
-        return label
-    }()
-    
     private lazy var nftsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(NftCell.self)
+        collectionView.register(NftHeaderCollectionView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.showsVerticalScrollIndicator = false
+        collectionView.contentInsetAdjustmentBehavior = .never
         return collectionView
     }()
     
@@ -113,10 +65,7 @@ final class NftCollectionViewController: UIViewController {
         view.backgroundColor = .white
     }
     
-    @objc private func didTapAuthorButton() {
-        //TODO: Переход на страницу автора
-    }
-    
+    //MARK: - Private methods
     @objc private func backToNftCatalogViewController() {
         navigationController?.popViewController(animated: true)
     }
@@ -133,6 +82,20 @@ extension NftCollectionViewController: UICollectionViewDataSource {
         let cellModel = nftCellModel[indexPath.item]
         cell.configure(cellModel: cellModel)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+            return CGSize(width: view.frame.width, height: 450)
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        
+        let headerView: NftHeaderCollectionView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, indexPath: indexPath)
+        headerView.configure(collectionModel)
+        return headerView
     }
 }
 
@@ -157,10 +120,6 @@ extension NftCollectionViewController: UICollectionViewDelegateFlowLayout {
 extension NftCollectionViewController: NftCollectionView {
     func display(_ model: NftCollectionModel) {
         self.collectionModel = model
-        collectionNameLabel.text = model.name
-        authorButton.setTitle(model.author, for: .normal)
-        descriptionLabel.text = model.description
-        coverImageView.kf.setImage(with: model.cover)
         nftsCollectionView.reloadData()
     }
     
@@ -175,14 +134,8 @@ extension NftCollectionViewController: NftCollectionView {
 //MARK: - AutoLayout
 extension NftCollectionViewController {
     private func setupViews() {
-        [placeholderImageView,
-         coverImageView,
+        [nftsCollectionView,
          backwardButton,
-         collectionNameLabel,
-         authorLabel,
-         authorButton,
-         descriptionLabel,
-         nftsCollectionView,
          activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view?.addSubview($0)
@@ -191,36 +144,13 @@ extension NftCollectionViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            placeholderImageView.heightAnchor.constraint(equalToConstant: 310),
-            placeholderImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            placeholderImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            placeholderImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
-            coverImageView.heightAnchor.constraint(equalToConstant: 310),
-            coverImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            coverImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            coverImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            nftsCollectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            nftsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            nftsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            nftsCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             backwardButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
             backwardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
-            
-            collectionNameLabel.topAnchor.constraint(equalTo: coverImageView.bottomAnchor, constant: 16),
-            collectionNameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            
-            authorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            
-            authorButton.topAnchor.constraint(equalTo: collectionNameLabel.bottomAnchor, constant: 8),
-            authorButton.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
-            authorButton.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 4),
-            
-            descriptionLabel.topAnchor.constraint(equalTo: authorButton.bottomAnchor),
-            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
-            
-            nftsCollectionView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
-            nftsCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nftsCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            nftsCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
         ])
         activityIndicator.constraintCenters(to: nftsCollectionView)
     }
