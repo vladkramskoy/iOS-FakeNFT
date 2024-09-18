@@ -58,4 +58,14 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Text placeholder alert"
     )
+    static let cellFrom = NSLocalizedString(
+        "My.NFT.cell.from",
+        tableName: "Profile",
+        comment: "Text from"
+    )
+    static let cellPrice = NSLocalizedString(
+        "My.NFT.cell.price",
+        tableName: "Profile",
+        comment: "Text price"
+    )
 }

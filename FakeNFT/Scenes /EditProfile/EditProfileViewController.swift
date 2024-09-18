@@ -365,7 +365,6 @@ extension EditProfileViewController {
         static let userTextFieldHeight: CGFloat = 44
         static let topTittleOffset: CGFloat = 24
         static let textViewHeight: CGFloat = 132
-        
     }
 }
 

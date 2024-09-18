@@ -1,10 +1,10 @@
-/* 
-  Profile.strings
-  FakeNFT
-
-  Created by gimon on 07.09.2024.
-  
-*/
+/*
+ Profile.strings
+ FakeNFT
+ 
+ Created by gimon on 07.09.2024.
+ 
+ */
 
 "Profile.myNFT" = "Мои NFT";
 "Profile.favoriteNFT" = "Избранные NFT";
@@ -16,3 +16,5 @@
 "Edit.profile.alert.cancel.button" = "Отмена";
 "Edit.profile.alert.ok.button" = "OK";
 "Edit.profile.alert.placeholder" = "Введите ссылку...";
+"My.NFT.cell.from" = "от";
+"My.NFT.cell.price" = "Цена";
