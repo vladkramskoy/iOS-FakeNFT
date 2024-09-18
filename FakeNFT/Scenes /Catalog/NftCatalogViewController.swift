@@ -12,7 +12,9 @@ final class NftCatalogViewController: UIViewController {
     private let presenter: NftCatalogPresenter
     private var cellModels: [NftCatalogCellModel] = []
     
-    internal lazy var activityIndicator = UIActivityIndicatorView()
+    //MARK: - Public Properties
+    var servicesAssembly: ServicesAssembly!
+    lazy var activityIndicator = UIActivityIndicatorView()
     
     //MARK: - UIModels
     private lazy var sortButton: UIButton = {
@@ -48,6 +50,10 @@ final class NftCatalogViewController: UIViewController {
         setupConstraints()
         presenter.viewDidLoad()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
 }
 
 //MARK: - UITableViewDataSource
@@ -69,7 +75,7 @@ extension NftCatalogViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 8
+        return 14
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -84,8 +90,17 @@ extension NftCatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 179
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let nftId = cellModels[indexPath.section].id
+        let assembly = NftCollectionAssembly(servicesAssembler: servicesAssembly)
+        let nftCollectionViewController = assembly.build(with: nftId)
+        navigationController?.pushViewController(nftCollectionViewController, animated: true)
+    }
+    
 }
 
+//MARK: - NftCatalogView
 extension NftCatalogViewController: NftCatalogView {
     func displayCells(_ cellModels: [NftCatalogCellModel]) {
         self.cellModels = cellModels

@@ -10,9 +10,15 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
     }
     
     //MARK: - UIModels
+    private lazy var placeholderImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "photo")
+        imageView.tintColor = .gray
+        return imageView
+    }()
+    
     private lazy var nftCollectionImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(resource: .nftCollectionMock)
         imageView.layer.cornerRadius = UIConstants.nftCollectionImageViewCornerRadius
         imageView.clipsToBounds = true
         return imageView
@@ -46,7 +52,8 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
 //MARK: - AutoLayout
 extension NftCatalogCell {
     private func setupViews() {
-        [nftCollectionImageView,
+        [placeholderImageView,
+         nftCollectionImageView,
          nftCountLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
@@ -55,6 +62,11 @@ extension NftCatalogCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            placeholderImageView.heightAnchor.constraint(equalToConstant: 140),
+            placeholderImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            placeholderImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            placeholderImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
             nftCollectionImageView.heightAnchor.constraint(equalToConstant: 140),
             nftCollectionImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftCollectionImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),

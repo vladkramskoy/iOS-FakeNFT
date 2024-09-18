@@ -13,7 +13,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let assembly = NftCatalogAssembly(servicesAssembler: servicesAssembly)
-        let nftCatalogViewController = assembly.build()
+        let nftCatalogViewController = UINavigationController(rootViewController: assembly.build())
         
         nftCatalogViewController.tabBarItem = catalogTabBarItem
         

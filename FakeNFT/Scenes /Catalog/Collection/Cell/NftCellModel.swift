@@ -1,6 +1,7 @@
+
 import Foundation
 
-struct Nft: Decodable {
+struct NftCellModel {
     let name: String
     let images: [URL]
     let rating: Int
