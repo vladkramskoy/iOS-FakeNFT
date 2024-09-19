@@ -14,17 +14,25 @@ final class CartTableViewCell: UITableViewCell {
     
     private var nftRating: Int = 0
     
+    lazy var nftImageView: UIImageView = {
+        let nftImageView = UIImageView()
+        nftImageView.layer.cornerRadius = 12
+        nftImageView.layer.masksToBounds = true
+        nftImageView.translatesAutoresizingMaskIntoConstraints = false
+        return nftImageView
+    }()
+    
     private lazy var containerView: UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = UIColor(named: "whiteObjectColor")
+        containerView.backgroundColor = UIColor.whiteObjectColor
         containerView.translatesAutoresizingMaskIntoConstraints = false
         return containerView
     }()
     
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
-        nameLabel.font = UIFont.boldSystemFont(ofSize: 17)
-        nameLabel.textColor = UIColor(named: "darkObjectColor")
+        nameLabel.font = UIFont.bodyBold
+        nameLabel.textColor = UIColor.darkObjectColor
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         return nameLabel
     }()
@@ -42,16 +50,16 @@ final class CartTableViewCell: UITableViewCell {
     private lazy var priceLabel: UILabel = {
         let priceLabel = UILabel()
         priceLabel.text = "Цена"
-        priceLabel.font = UIFont.systemFont(ofSize: 13)
-        priceLabel.textColor = UIColor(named: "darkObjectColor")
+        priceLabel.font = UIFont.caption2
+        priceLabel.textColor = UIColor.darkObjectColor
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
         return priceLabel
     }()
     
     private lazy var priceValueLabel: UILabel = {
         let priceValueLabel = UILabel()
-        priceValueLabel.font = UIFont.boldSystemFont(ofSize: 17)
-        priceValueLabel.textColor = UIColor(named: "darkObjectColor")
+        priceValueLabel.font = UIFont.bodyBold
+        priceValueLabel.textColor = UIColor.darkObjectColor
         priceValueLabel.translatesAutoresizingMaskIntoConstraints = false
         return priceValueLabel
     }()
@@ -61,18 +69,10 @@ final class CartTableViewCell: UITableViewCell {
         if let image = UIImage(named: "deleteCartIcon")?.withRenderingMode(.alwaysTemplate) {
                 deleteButton.setImage(image, for: .normal)
             }
-        deleteButton.tintColor = UIColor(named: "darkObjectColor")
+        deleteButton.tintColor = UIColor.darkObjectColor
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         return deleteButton
-    }()
-    
-    lazy var nftImageView: UIImageView = {
-        let nftImageView = UIImageView()
-        nftImageView.layer.cornerRadius = 12
-        nftImageView.layer.masksToBounds = true
-        nftImageView.translatesAutoresizingMaskIntoConstraints = false
-        return nftImageView
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -83,7 +83,16 @@ final class CartTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
+    func configure(image: UIImage, name: String, rating: Int, price: String) {
+        nftImageView.image = image
+        nameLabel.text = name
+        nftRating = rating
+        priceValueLabel.text = price
+        
+        setupRatingStars()
+    }
+    
     private func setupCell() {
         contentView.addSubview(containerView)
         containerView.addSubview(nftImageView)
@@ -139,15 +148,6 @@ final class CartTableViewCell: UITableViewCell {
             ratingImageView.heightAnchor.constraint(equalToConstant: 12).isActive = true
             ratingStackView.addArrangedSubview(ratingImageView)
         }
-    }
-    
-    func configure(image: UIImage, name: String, rating: Int, price: String) {
-        nftImageView.image = image
-        nameLabel.text = name
-        nftRating = rating
-        priceValueLabel.text = price
-        
-        setupRatingStars()
     }
     
     @objc private func deleteButtonTapped() {

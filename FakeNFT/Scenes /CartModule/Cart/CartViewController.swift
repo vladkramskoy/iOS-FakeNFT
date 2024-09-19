@@ -10,6 +10,7 @@ import UIKit
 protocol CartViewControllerProtocol: AnyObject {
     func updateView()
     func navigateToDeleteViewController(viewController: UIViewController)
+    func navigateToPaymentViewController(viewController: UIViewController)
     func showLoading()
     func hideLoading()
     func showErrorAlert()
@@ -25,7 +26,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = UIColor(named: "whiteObjectColor")
+        tableView.backgroundColor = UIColor.whiteObjectColor
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(CartTableViewCell.self, forCellReuseIdentifier: CartTableViewCell.identifier)
@@ -33,16 +34,16 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         return tableView
     }()
     
-    private lazy var payButton: UIButton = {
-        let payButton = UIButton(type: .system)
-        payButton.setTitle("К оплате", for: .normal)
-        payButton.tintColor = UIColor(named: "whiteObjectColor")
-        payButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 17)
-        payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
-        payButton.layer.cornerRadius = 16
-        payButton.backgroundColor = UIColor(named: "darkObjectColor")
-        payButton.translatesAutoresizingMaskIntoConstraints = false
-        return payButton
+    private lazy var paymentButton: UIButton = {
+        let paymentButton = UIButton(type: .system)
+        paymentButton.setTitle("К оплате", for: .normal)
+        paymentButton.tintColor = UIColor.whiteObjectColor
+        paymentButton.titleLabel?.font = UIFont.bodyBold
+        paymentButton.addTarget(self, action: #selector(paymentButtonTapped), for: .touchUpInside)
+        paymentButton.layer.cornerRadius = 16
+        paymentButton.backgroundColor = UIColor.darkObjectColor
+        paymentButton.translatesAutoresizingMaskIntoConstraints = false
+        return paymentButton
     }()
     
     private lazy var nftCountLabel: UILabel = {
@@ -50,10 +51,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         if let presenter = presenter {
             nftCountLabel.text = "\(presenter.cartNfts.count) \(nftLabel)"
         } else {
-            nftCountLabel.text = "0 NFT"
+            nftCountLabel.text = "0 \(nftLabel)"
         }
-        nftCountLabel.textColor = UIColor(named: "darkObjectColor")
-        nftCountLabel.font = UIFont.systemFont(ofSize: 15)
+        nftCountLabel.textColor = UIColor.darkObjectColor
+        nftCountLabel.font = UIFont.caption1
         nftCountLabel.translatesAutoresizingMaskIntoConstraints = false
         return nftCountLabel
     }()
@@ -61,19 +62,19 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     private lazy var sumLabel: UILabel = {
         let sumLabel = UILabel()
         let sum = presenter?.calculateTotalPrice() ?? Float()
-        sumLabel.text = "\(sum) ETH"
-        sumLabel.textColor = UIColor(named: "sumTextColor")
-        sumLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        sumLabel.text = "\(sum) \(currencySymbol)"
+        sumLabel.textColor = UIColor.textGreen
+        sumLabel.font = UIFont.bodyBold
         sumLabel.translatesAutoresizingMaskIntoConstraints = false
         return sumLabel
     }()
     
     private lazy var paymentAreaView: UIView = {
         let paymentAreaView = UIView()
-        paymentAreaView.layer.cornerRadius = 16
+        paymentAreaView.layer.cornerRadius = 12
         paymentAreaView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         paymentAreaView.layer.masksToBounds = true
-        paymentAreaView.backgroundColor = UIColor(named: "paymentAreaColor")
+        paymentAreaView.backgroundColor = UIColor.paymentAreaColor
         paymentAreaView.translatesAutoresizingMaskIntoConstraints = false
         return paymentAreaView
     }()
@@ -83,7 +84,14 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         return activityIndicator
     }()
-    
+        
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        loadData()
+        setupUI()
+        setupNavigationBar()
+    }
+
     func updateView() {
         let updateSum = presenter?.calculateTotalPrice() ?? Float()
         let updateCountNft = presenter?.cartNfts.count ?? Int()
@@ -99,6 +107,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     func navigateToDeleteViewController(viewController: UIViewController) {
         present(viewController, animated: true)
+    }
+    
+    func navigateToPaymentViewController(viewController: UIViewController) {
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     func showErrorAlert() {
@@ -132,25 +144,18 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        loadData()
-        setupUI()
-        setupNavigationBar()
-    }
-
     private func setupUI() {
-        view.backgroundColor = UIColor(named: "whiteObjectColor")
+        view.backgroundColor = UIColor.whiteObjectColor
         view.addSubview(tableView)
         view.addSubview(paymentAreaView)
         view.addSubview(activityIndicator)
-        paymentAreaView.addSubview(payButton)
+        paymentAreaView.addSubview(paymentButton)
         paymentAreaView.addSubview(nftCountLabel)
         paymentAreaView.addSubview(sumLabel)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: payButton.topAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: paymentButton.topAnchor, constant: -16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
@@ -159,15 +164,15 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
             paymentAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             paymentAreaView.heightAnchor.constraint(equalToConstant: 76),
             
-            payButton.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
-            payButton.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
-            payButton.heightAnchor.constraint(equalToConstant: 44),
+            paymentButton.trailingAnchor.constraint(equalTo: paymentAreaView.trailingAnchor, constant: -16),
+            paymentButton.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
+            paymentButton.heightAnchor.constraint(equalToConstant: 44),
             
             nftCountLabel.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
             nftCountLabel.bottomAnchor.constraint(equalTo: sumLabel.topAnchor, constant: -2),
             
             sumLabel.leadingAnchor.constraint(equalTo: paymentAreaView.leadingAnchor, constant: 16),
-            sumLabel.trailingAnchor.constraint(equalTo: payButton.leadingAnchor, constant: -24),
+            sumLabel.trailingAnchor.constraint(equalTo: paymentButton.leadingAnchor, constant: -24),
             sumLabel.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
             
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -178,7 +183,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "lineHorizontal")
         let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(hamburgerMenuTapped))
-        barButtonItem.tintColor = UIColor(named: "darkObjectColor")
+        barButtonItem.tintColor = UIColor.darkObjectColor
         navigationItem.rightBarButtonItem = barButtonItem
     }
     
@@ -186,8 +191,8 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         //TODO: - process code
     }
     
-    @objc private func payButtonTapped() {
-        //TODO: - process code
+    @objc private func paymentButtonTapped() {
+        presenter?.handlePaymentButtonTapped()
     }
 }
 
@@ -219,7 +224,7 @@ extension CartViewController: UITableViewDataSource {
             }
         }
 
-        cell.backgroundColor = UIColor(named: "whiteObjectColor")
+        cell.backgroundColor = UIColor.whiteObjectColor
         cell.selectionStyle = .none
         return cell
     }
@@ -232,11 +237,6 @@ extension CartViewController: UITableViewDelegate {
 }
 
 extension CartViewController {
-    private func loadData() {
-        showLoading()
-        presenter?.loadData()
-    }
-    
     func showLoading() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -253,6 +253,11 @@ extension CartViewController {
             self.activityIndicator.stopAnimating()
             self.view.isUserInteractionEnabled = true
         }
+    }
+    
+    private func loadData() {
+        showLoading()
+        presenter?.loadData()
     }
 }
 

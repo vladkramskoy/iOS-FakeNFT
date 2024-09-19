@@ -87,11 +87,6 @@ final class OrderService {
         }.resume()
     }
     
-    private func prepareParametrs(for data: [CartNft]) -> Data? {
-        let parametrs = data.map { "nfts=\($0.id)" }.joined(separator: "&")
-        return parametrs.data(using: .utf8)
-    }
-    
     func deleteNftRequest(withId id: String, from data: [CartNft], completion: @escaping (Result<[CartNft], Error>) -> Void) {
         let updateData = data.filter { $0.id != id }
         
@@ -108,7 +103,7 @@ final class OrderService {
         var request = URLRequest(url: url)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.addValue("0c1e998a-def2-4ac5-979e-b91c16b62d81", forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
         
         request.httpMethod = "PUT"
         request.httpBody = postData
@@ -129,5 +124,10 @@ final class OrderService {
             completion(.success(updateData))
         }
         task.resume()
+    }
+    
+    private func prepareParametrs(for data: [CartNft]) -> Data? {
+        let parametrs = data.map { "nfts=\($0.id)" }.joined(separator: "&")
+        return parametrs.data(using: .utf8)
     }
 }

@@ -33,8 +33,8 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
         messageLabel.text = "Вы уверены, что хотите \nудалить объект из корзины?"
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 2
-        messageLabel.font = UIFont.systemFont(ofSize: 13)
-        messageLabel.textColor = UIColor(named: "darkObjectColor")
+        messageLabel.font = UIFont.caption2
+        messageLabel.textColor = UIColor.darkObjectColor
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         return messageLabel
     }()
@@ -50,11 +50,11 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
     private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton(type: .system)
         deleteButton.setTitle("Удалить", for: .normal)
-        deleteButton.tintColor = UIColor(named: "delTextColor")
-        deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        deleteButton.tintColor = UIColor.textRed
+        deleteButton.titleLabel?.font = UIFont.bodyRegular
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         deleteButton.layer.cornerRadius = 12
-        deleteButton.backgroundColor = UIColor(named: "darkObjectColor")
+        deleteButton.backgroundColor = UIColor.darkObjectColor
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         return deleteButton
     }()
@@ -62,11 +62,11 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton(type: .system)
         cancelButton.setTitle("Вернуться", for: .normal)
-        cancelButton.tintColor = UIColor(named: "whiteObjectColor")
-        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        cancelButton.tintColor = UIColor.whiteObjectColor
+        cancelButton.titleLabel?.font = UIFont.bodyRegular
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         cancelButton.layer.cornerRadius = 12
-        cancelButton.backgroundColor = UIColor(named: "darkObjectColor")
+        cancelButton.backgroundColor = UIColor.darkObjectColor
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelButton
     }()
