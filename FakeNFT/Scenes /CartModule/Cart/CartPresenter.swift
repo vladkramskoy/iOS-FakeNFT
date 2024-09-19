@@ -16,6 +16,9 @@ protocol CartPresenterProtocol: AnyObject {
     func calculateTotalPrice() -> Float
     func removePositionFromCart(id: String)
     func handlePaymentButtonTapped()
+    func sortByPrice()
+    func sortByRating()
+    func sortByName()
 }
 
 final class CartPresenter: CartPresenterProtocol {
@@ -82,6 +85,21 @@ final class CartPresenter: CartPresenterProtocol {
         paymentViewController.hidesBottomBarWhenPushed = true
         paymentViewController.presenter = paymentPresenter
         self.view?.navigateToPaymentViewController(viewController: paymentViewController)
+    }
+    
+    func sortByPrice() {
+        cartNfts.sort { $0.price < $1.price }
+        view?.tableView.reloadData()
+    }
+    
+    func sortByRating() {
+        cartNfts.sort { $0.rating < $1.rating }
+        view?.tableView.reloadData()
+    }
+    
+    func sortByName() {
+        cartNfts.sort { $0.name < $1.name }
+        view?.tableView.reloadData()
     }
     
     private func getCartNfts() {

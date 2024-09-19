@@ -8,6 +8,8 @@
 import UIKit
 
 protocol CartViewControllerProtocol: AnyObject {
+    var tableView: UITableView { get }
+    
     func updateView()
     func navigateToDeleteViewController(viewController: UIViewController)
     func navigateToPaymentViewController(viewController: UIViewController)
@@ -23,7 +25,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     private let currencySymbol = "ETH"
     private let nftLabel = "NFT"
     
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = UIColor.whiteObjectColor
@@ -182,13 +184,33 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
 
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "lineHorizontal")
-        let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(hamburgerMenuTapped))
+        let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(sortButtonTapped))
         barButtonItem.tintColor = UIColor.darkObjectColor
         navigationItem.rightBarButtonItem = barButtonItem
     }
     
-    @objc private func hamburgerMenuTapped() {
-        //TODO: - process code
+    private func showActionSheet() {
+        let actionSheet = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "По цене", style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByPrice()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "По рейтингу", style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByRating()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "По названию", style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByName()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Закрыть", style: .cancel, handler: nil))
+        present(actionSheet, animated: true)
+    }
+    
+    @objc private func sortButtonTapped() {
+        showActionSheet()
     }
     
     @objc private func paymentButtonTapped() {
