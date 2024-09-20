@@ -14,6 +14,7 @@ protocol ProfilePresenterProtocol {
     func getTextCell(number: Int) -> String
     func loadProfile()
     func editProfile(profile: ProfileData)
+    func getMyNftController() -> MyNFTViewController
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
@@ -27,6 +28,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     private var profileService: ProfileService
     private var editProfileServices: EditProfileServices
+    private var nftService: NftService
     private let arrayTextCell = [
         LocalizedText.myNFT,
         LocalizedText.favoriteNFT,
@@ -36,6 +38,17 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     init(servicesAssembler: ServicesAssembly) {
         self.profileService = servicesAssembler.profileService
         self.editProfileServices = servicesAssembler.editProfileServices
+        self.nftService = servicesAssembler.nftService
+    }
+    
+    func getMyNftController() -> MyNFTViewController {
+        let myNFTPresenter = MyNFTPresenter(
+            nftService: nftService,
+            myNFTIDArray: profileData?.nfts ?? []
+        )
+        let myNFT = MyNFTViewController(myNFTPresenter: myNFTPresenter)
+        myNFTPresenter.myNFTViewController = myNFT
+        return myNFT
     }
     
     func getTextCell(number: Int) -> String {

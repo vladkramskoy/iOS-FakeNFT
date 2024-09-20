@@ -54,20 +54,11 @@ final class MyNFTTableViewCell: UITableViewCell {
         return view
     }()
     
-    private lazy var imageStar: UIImageView = {
-        let image = UIImage(
-            systemName: "star.fill"
-        )?.withRenderingMode(.alwaysTemplate)
-        let view = UIImageView(image: image)
-        view.tintColor = .yellowStar // or .segmentInactive
-        return view
-    }()
-    
     private lazy var ratingStack: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
         view.distribution = .fill
-        view.alignment = .leading
+        view.alignment = .center
         view.spacing = 2
         return view
     }()
@@ -76,7 +67,7 @@ final class MyNFTTableViewCell: UITableViewCell {
         let view = UIStackView()
         view.axis = .horizontal
         view.distribution = .fill
-        view.alignment = .leading
+        view.alignment = .bottom
         view.spacing = 4
         return view
     }()
@@ -115,7 +106,6 @@ final class MyNFTTableViewCell: UITableViewCell {
             authorNFT,
             tittlePrice,
             price,
-            imageStar,
             ratingStack,
             authorStack,
             infoStack,
@@ -128,7 +118,7 @@ final class MyNFTTableViewCell: UITableViewCell {
             labelFrom,
             authorNFT
         ].forEach{
-            authorStack.addSubview($0)
+            authorStack.addArrangedSubview($0)
         }
         
         [
@@ -136,14 +126,14 @@ final class MyNFTTableViewCell: UITableViewCell {
             ratingStack,
             authorStack
         ].forEach{
-            infoStack.addSubview($0)
+            infoStack.addArrangedSubview($0)
         }
         
         [
             tittlePrice,
             price
         ].forEach{
-            priceStack.addSubview($0)
+            priceStack.addArrangedSubview($0)
         }
         
         [
@@ -155,8 +145,6 @@ final class MyNFTTableViewCell: UITableViewCell {
         }
         
         addConstraintImageNFT()
-        addConstraintImageStar()
-        addStarInRating()
         addConstraintInfoStack()
         addConstraintPriceStack()
     }
@@ -167,18 +155,25 @@ final class MyNFTTableViewCell: UITableViewCell {
     
     // MARK: - Public Methods
     func configCell(
-        image: String,
+        image: URL?,
         name: String,
         author: String,
-        priceNFT: String,
+        priceNFT: Float,
         star: Int
     ) {
-        let url = URL(string: image)
-        imageNFT.kf.setImage(with: url)
+        imageNFT.kf.setImage(with: image)
         nameNFT.text = name
         authorNFT.text = author
         price.text = "\(priceNFT) ETH"
         countStar = star
+        
+        addStarInRating()
+    }
+    
+    override func prepareForReuse() {
+        ratingStack.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
     
     // MARK: - Private Methods
@@ -201,7 +196,7 @@ final class MyNFTTableViewCell: UITableViewCell {
                 ),
                 imageNFT.bottomAnchor.constraint(
                     equalTo: bottomAnchor,
-                    constant: ConstantsConstraint.defaultOffset
+                    constant: -ConstantsConstraint.defaultOffset
                 )
             ]
         )
@@ -216,6 +211,9 @@ final class MyNFTTableViewCell: UITableViewCell {
                 infoStack.leadingAnchor.constraint(
                     equalTo: imageNFT.trailingAnchor,
                     constant: ConstantsConstraint.infoStackLeftOffset
+                ),
+                infoStack.widthAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.infoStackWidth
                 )
             ]
         )
@@ -228,21 +226,8 @@ final class MyNFTTableViewCell: UITableViewCell {
                     equalTo: imageNFT.centerYAnchor
                 ),
                 priceStack.leadingAnchor.constraint(
-                    equalTo: infoStack.trailingAnchor,
+                    equalTo: imageNFT.trailingAnchor,
                     constant: ConstantsConstraint.priceStackLeftOffset
-                )
-            ]
-        )
-    }
-    
-    private func addConstraintImageStar() {
-        NSLayoutConstraint.activate(
-            [
-                imageStar.heightAnchor.constraint(
-                    equalToConstant: ConstantsConstraint.imageStarSize
-                ),
-                imageStar.widthAnchor.constraint(
-                    equalToConstant: ConstantsConstraint.imageStarSize
                 )
             ]
         )
@@ -250,9 +235,23 @@ final class MyNFTTableViewCell: UITableViewCell {
     
     private func addStarInRating() {
         for i in 1...5 {
+            let image = UIImage(
+                systemName: "star.fill"
+            )?.withRenderingMode(.alwaysTemplate)
+            let imageStar = UIImageView(image: image)
             imageStar.tintColor = countStar >= i ? .yellowStar : .segmentInactive
-            let view = imageStar
-            ratingStack.addSubview(view)
+            imageStar.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate(
+                [
+                    imageStar.heightAnchor.constraint(
+                        equalToConstant: ConstantsConstraint.imageStarSize
+                    ),
+                    imageStar.widthAnchor.constraint(
+                        equalToConstant: ConstantsConstraint.imageStarSize
+                    )
+                ]
+            )
+            ratingStack.addArrangedSubview(imageStar)
         }
     }
 }
@@ -263,6 +262,7 @@ extension MyNFTTableViewCell {
         static let imageNFTSize: CGFloat = 108
         static let imageStarSize: CGFloat = 12
         static let infoStackLeftOffset: CGFloat = 20
-        static let priceStackLeftOffset: CGFloat = 39
+        static let priceStackLeftOffset: CGFloat = 137
+        static let infoStackWidth: CGFloat = 78
     }
 }

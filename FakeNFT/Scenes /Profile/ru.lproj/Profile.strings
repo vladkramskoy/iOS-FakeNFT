@@ -18,3 +18,10 @@
 "Edit.profile.alert.placeholder" = "Введите ссылку...";
 "My.NFT.cell.from" = "от";
 "My.NFT.cell.price" = "Цена";
+"My.NFT.empty.NFT" = "У Вас ещё нет NFT";
+"My.NFT.navbar.title" = "Мои NFT";
+"My.NFT.alert.title" = "Сортировка";
+"My.NFT.alert.price" = "По цене";
+"My.NFT.alert.rating" = "По рейтингу";
+"My.NFT.alert.name" = "По названию";
+"My.NFT.alert.close" = "Закрыть";

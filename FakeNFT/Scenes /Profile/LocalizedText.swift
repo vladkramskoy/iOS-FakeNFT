@@ -68,4 +68,39 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Text price"
     )
+    static let emptyNFT = NSLocalizedString(
+        "My.NFT.empty.NFT",
+        tableName: "Profile",
+        comment: "Text label"
+    )
+    static let myNFTNavbarTitle = NSLocalizedString(
+        "My.NFT.navbar.title",
+        tableName: "Profile",
+        comment: "Text title"
+    )
+    static let sortAlertTitle = NSLocalizedString(
+        "My.NFT.alert.title",
+        tableName: "Profile",
+        comment: "Alert title"
+    )
+    static let sortAlertPrice = NSLocalizedString(
+        "My.NFT.alert.price",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
+    static let sortAlertRating = NSLocalizedString(
+        "My.NFT.alert.rating",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
+    static let sortAlertName = NSLocalizedString(
+        "My.NFT.alert.name",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
+    static let sortAlertClose = NSLocalizedString(
+        "My.NFT.alert.close",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
 }
