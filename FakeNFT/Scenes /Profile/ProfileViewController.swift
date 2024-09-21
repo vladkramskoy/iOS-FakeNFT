@@ -10,6 +10,7 @@ import Kingfisher
 
 protocol ProfileViewControllerProtocol: AnyObject, LoadingView {
     func updateProfile()
+    func hideViewElements()
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -125,11 +126,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     func updateProfile() {
         if let profile: ProfileData = presenter.profileData {
             let url = URL(string: profile.avatar)
-            let processor = RoundCornerImageProcessor(cornerRadius: 70)
-            imageProfile.kf.setImage(
-                with: url,
-                options: [.processor(processor)]
-            )
+            imageProfile.kf.setImage(with: url)
             userName.text = profile.name
             userDescription.text = profile.description
             tableView.reloadData()
@@ -146,9 +143,24 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         }
     }
     
+    func hideViewElements() {
+        [
+            editProfileButton,
+            imageProfile,
+            userName,
+            userDescription,
+            tableView
+        ].forEach{
+            $0.isHidden = true
+        }
+        self.showLoading()
+    }
+    
     //MARK: - Private Methods
     @objc private func clickEditProfileButton(){
-        //TODO: - add body
+        let viewController = EditProfileViewController(profilePresenter: presenter)
+        present(viewController, animated: true)
+        
     }
     
     private func addConstraintEditProfileButton(){
@@ -269,6 +281,14 @@ extension ProfileViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.row {
+        case 0:
+            let myNFTc = presenter.getMyNftController()
+            let nc = UINavigationController(rootViewController: myNFTc)
+            nc.modalPresentationStyle = .fullScreen
+            present(nc, animated: true)
+        default: break
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

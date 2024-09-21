@@ -27,4 +27,11 @@ final class ServicesAssembly {
             profileStorage: profileStorage
         )
     }
+    
+    var editProfileServices: EditProfileServices {
+        EditProfileServicesImpl(
+            networkClient: networkClient,
+            profileStorage: profileStorage
+        )
+    }
 }
