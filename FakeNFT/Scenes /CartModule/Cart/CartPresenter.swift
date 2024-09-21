@@ -63,6 +63,7 @@ final class CartPresenter: CartPresenterProtocol {
                 self.cartNfts = updateData
                 view?.updateView()
                 view?.hideLoading()
+                view?.checkArrayAndShowPlaceholder()
                 
                 print("Позиция \(id) удалена")
             case .failure(_):
@@ -110,6 +111,7 @@ final class CartPresenter: CartPresenterProtocol {
             case .success(let nftIds):
                 guard !nftIds.isEmpty else {
                     self.view?.hideLoading()
+                    self.view?.checkArrayAndShowPlaceholder()
                     return
                 }
                 

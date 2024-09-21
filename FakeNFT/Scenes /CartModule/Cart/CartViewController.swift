@@ -17,6 +17,7 @@ protocol CartViewControllerProtocol: AnyObject {
     func hideLoading()
     func showErrorAlert()
     func showDeletionErrorAlert()
+    func checkArrayAndShowPlaceholder()
 }
 
 final class CartViewController: UIViewController, CartViewControllerProtocol {
@@ -86,7 +87,19 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         return activityIndicator
     }()
-        
+    
+    private lazy var placeholderLabel: UILabel = {
+        let placeholderLabel = UILabel()
+        placeholderLabel.text = "Корзина пуста"
+        placeholderLabel.textAlignment = .center
+        placeholderLabel.textColor = UIColor.darkObjectColor
+        placeholderLabel.font = UIFont.bodyBold
+        placeholderLabel.frame = self.view.bounds
+        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        placeholderLabel.isHidden = true
+        return placeholderLabel
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadData()
@@ -117,7 +130,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     func showErrorAlert() {
         let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { [weak self] _ in
+            guard let self else { return }
+            self.checkArrayAndShowPlaceholder()
+        }
         let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
             guard let self else { return }
             self.loadData()
@@ -146,11 +162,26 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         }
     }
     
+    func checkArrayAndShowPlaceholder() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            if presenter?.cartNfts.isEmpty ?? true {
+                placeholderLabel.isHidden = false
+                tableView.isHidden = true
+                paymentAreaView.isHidden = true
+            }
+            
+            tableView.reloadData()
+        }
+    }
+    
     private func setupUI() {
         view.backgroundColor = UIColor.whiteObjectColor
         view.addSubview(tableView)
         view.addSubview(paymentAreaView)
         view.addSubview(activityIndicator)
+        view.addSubview(placeholderLabel)
         paymentAreaView.addSubview(paymentButton)
         paymentAreaView.addSubview(nftCountLabel)
         paymentAreaView.addSubview(sumLabel)
@@ -178,7 +209,10 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
             sumLabel.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
             
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
