@@ -164,7 +164,11 @@ final class MyNFTTableViewCell: UITableViewCell {
         imageNFT.kf.setImage(with: image)
         nameNFT.text = name
         authorNFT.text = author
-        price.text = "\(priceNFT) ETH"
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.currencyCode = "ETH"
+        price.text = formatter.string(from: NSNumber(value: priceNFT)) ?? "0"
         countStar = star
         
         addStarInRating()
@@ -234,12 +238,12 @@ final class MyNFTTableViewCell: UITableViewCell {
     }
     
     private func addStarInRating() {
-        for i in 1...5 {
+        for i in 0..<5 {
             let image = UIImage(
                 systemName: "star.fill"
             )?.withRenderingMode(.alwaysTemplate)
             let imageStar = UIImageView(image: image)
-            imageStar.tintColor = countStar >= i ? .yellowStar : .segmentInactive
+            imageStar.tintColor = countStar > i ? .yellowStar : .segmentInactive
             imageStar.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate(
                 [

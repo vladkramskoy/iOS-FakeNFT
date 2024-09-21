@@ -22,6 +22,7 @@ final class MyNFTPresenter: MyNFTPresenterProtocol {
     private var myNFTIDArray: [String]
     private var myNFTArray: [Nft] = []
     private var countLoadedNFT = 0
+    private let currentSortKey = "currentSort"
     
     init(nftService: NftService, myNFTIDArray: [String]) {
         self.nftService = nftService
@@ -31,11 +32,16 @@ final class MyNFTPresenter: MyNFTPresenterProtocol {
     func sortMyNft(variant: SortVariant) {
         switch variant {
         case .price:
-            myNFTArray.sort{ $0.price > $1.price }
+            myNFTArray.sort{ $0.price < $1.price }
+            UserDefaults.standard.set(SortVariant.price.rawValue ,forKey: currentSortKey)
         case .rating:
-            myNFTArray.sort{ $0.rating > $1.rating }
+            myNFTArray.sort{ $0.rating < $1.rating }
+            UserDefaults.standard.set(SortVariant.rating.rawValue ,forKey: currentSortKey)
         case .name:
-            myNFTArray.sort{ $0.name > $1.name }
+            myNFTArray.sort{ $0.name < $1.name }
+            UserDefaults.standard.set(SortVariant.name.rawValue ,forKey: currentSortKey)
+        case .none:
+            return
         }
         myNFTViewController?.reloadTableMyNFT()
     }
@@ -73,14 +79,22 @@ final class MyNFTPresenter: MyNFTPresenterProtocol {
             }
             self.countLoadedNFT += 1
             if self.countLoadedNFT == self.myNFTIDArray.count {
+                if let sort = UserDefaults.standard.string(forKey: currentSortKey) {
+                    sortMyNft(variant: SortVariant(rawValue: sort) ?? .none)
+                }
                 self.myNFTViewController?.showMyNFT(isEmpty: self.myNFTArray.isEmpty)
+                let countNftError = self.myNFTIDArray.count - self.myNFTArray.count
+                if countNftError > 0 {
+                    self.myNFTViewController?.showErrorAlert(countNftError: countNftError)
+                }
             }
         }
     }
 }
 
-enum SortVariant {
+enum SortVariant: String {
     case price
     case rating
     case name
+    case none
 }

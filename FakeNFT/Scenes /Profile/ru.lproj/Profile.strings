@@ -25,3 +25,4 @@
 "My.NFT.alert.rating" = "По рейтингу";
 "My.NFT.alert.name" = "По названию";
 "My.NFT.alert.close" = "Закрыть";
+"My.NFT.error.alert.message" = "Не удалось загрузить";

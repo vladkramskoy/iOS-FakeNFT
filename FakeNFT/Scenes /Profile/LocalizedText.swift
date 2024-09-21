@@ -103,4 +103,9 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Alert text"
     )
+    static let errorAlertMessage = NSLocalizedString(
+        "My.NFT.error.alert.message",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
 }
