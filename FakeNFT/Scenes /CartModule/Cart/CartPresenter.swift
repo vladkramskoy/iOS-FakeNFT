@@ -79,12 +79,22 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
+    func getClearCartClosure() -> Void {
+        self.cartNfts = []
+        self.view?.checkArrayAndShowPlaceholder()
+        
+        DispatchQueue.main.async {
+            self.view?.tableView.reloadData()
+        }
+    }
+    
     func handlePaymentButtonTapped() {
         let paymentViewController = PaymentViewController()
         let paymentPresenter = PaymentPresenter(view: paymentViewController, servicesAssembly: self.servicesAssembly)
         paymentViewController.title = "Выберите способ оплаты"
         paymentViewController.hidesBottomBarWhenPushed = true
         paymentViewController.presenter = paymentPresenter
+        paymentViewController.presenter?.clearCartClosure = getClearCartClosure
         self.view?.navigateToPaymentViewController(viewController: paymentViewController)
     }
     

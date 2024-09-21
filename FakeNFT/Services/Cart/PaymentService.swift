@@ -57,4 +57,44 @@ final class PaymentService {
         }
         task.resume()
     }
+    
+    func payForOrder(cryptocurrencyIndex: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
+        guard let url = URL(string: "\(baseUrl)/api/v1/orders/1/payment/\(cryptocurrencyIndex)") else {
+            completion(.failure(NSError(domain: "", code: -1)))
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(NSError(domain: "", code: -1)))
+                print("No data received")
+                return
+            }
+            
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let success = jsonResponse["success"] as? Bool {
+                    
+                    completion(.success(success))
+                } else {
+                    completion(.failure(NSError(domain: "", code: -1)))
+                    print("Invalid response format")
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
 }

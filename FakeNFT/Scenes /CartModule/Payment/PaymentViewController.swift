@@ -9,9 +9,13 @@ import UIKit
 
 protocol PaymentViewControllerProtocol: AnyObject {
     func updateData()
+    func showLoading()
     func hideLoading()
-    func showErrorAlert()
+    func showGetCurrencyErrorAlert()
+    func selectedCurrencyErrorAlert()
+    func payForOrderErrorAlert()
     func navigateToAgreementViewController(viewController: UIViewController)
+    func navigateToPaymentSuccessViewController(viewController: UIViewController)
 }
 
 final class PaymentViewController: UIViewController, PaymentViewControllerProtocol {
@@ -101,7 +105,11 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showErrorAlert() {
+    func navigateToPaymentSuccessViewController(viewController: UIViewController) {
+        present(viewController, animated: true)
+    }
+    
+    func showGetCurrencyErrorAlert() {
         let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
         let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
@@ -111,6 +119,37 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         
         alertController.addAction(cancelAction)
         alertController.addAction(retryAction)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.present(alertController, animated: true)
+        }
+    }
+    
+    func payForOrderErrorAlert() {
+        let alertController = UIAlertController(title: "Не удалось произвести оплату", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
+        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.handlePayButtonTapped()
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(retryAction)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            self.present(alertController, animated: true)
+        }
+    }
+    
+    func selectedCurrencyErrorAlert() {
+        let alertController = UIAlertController(title: "Выберите метод оплаты", message: "", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
+        
+        alertController.addAction(cancelAction)
         
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -169,7 +208,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     }
     
     @objc private func payButtonTapped() {
-        print("pay button tapped")
+        presenter?.handlePayButtonTapped()
     }
     
     @objc private func agreementButtonTapped() {
@@ -214,6 +253,8 @@ extension PaymentViewController: UICollectionViewDelegate {
         currentCell?.layer.borderColor = UIColor.darkObjectColor.cgColor
         
         selectedIndexPath = indexPath
+        
+        presenter?.selectedCryprocurrncy = indexPath.row
     }
 }
 
@@ -237,7 +278,7 @@ extension PaymentViewController {
         }
     }
     
-    private func showLoading() {
+    func showLoading() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             

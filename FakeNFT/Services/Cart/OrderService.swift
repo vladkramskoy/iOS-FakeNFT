@@ -126,6 +126,41 @@ final class OrderService {
         task.resume()
     }
     
+    func cleaningCart(completion: @escaping (Result<Void, Error>) -> Void) {
+        let parameters = ""
+        let postData = parameters.data(using: .utf8)
+        
+        guard let url = URL(string: "\(baseUrl)/api/v1/orders/1") else {
+            completion(.failure(NSError(domain: "", code: -1)))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+
+        request.httpMethod = "PUT"
+        request.httpBody = postData
+
+        let task = URLSession.shared.dataTask(with: request) { _, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                completion(.failure(NSError(domain: "", code: -1)))
+                return
+            }
+            
+            completion(.success(()))
+        }
+        task.resume()
+    }
+    
     private func prepareParametrs(for data: [CartNft]) -> Data? {
         let parametrs = data.map { "nfts=\($0.id)" }.joined(separator: "&")
         return parametrs.data(using: .utf8)

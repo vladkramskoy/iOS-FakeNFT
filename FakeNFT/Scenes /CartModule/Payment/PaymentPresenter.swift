@@ -9,13 +9,18 @@ import UIKit
 
 protocol PaymentPresenterProtocol {
     var cryptocurrencies: [Cryptocurrency] { get }
+    var selectedCryprocurrncy: Int? { get set }
+    var clearCartClosure: (() -> Void)? { get set }
     
     func getListCryptocurrencies()
     func handleAgreementButtonTapped()
+    func handlePayButtonTapped()
 }
 
 final class PaymentPresenter: PaymentPresenterProtocol {
     var cryptocurrencies: [Cryptocurrency] = []
+    var selectedCryprocurrncy: Int?
+    var clearCartClosure: (() -> Void)?
     weak var view: PaymentViewControllerProtocol?
     
     private let servicesAssembly: ServicesAssembly
@@ -43,7 +48,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
                 print("Error in obtaining information about cryptocurrencies:", error)
                 
                 self.view?.hideLoading()
-                self.view?.showErrorAlert()
+                self.view?.showGetCurrencyErrorAlert()
             }
         }
     }
@@ -52,5 +57,56 @@ final class PaymentPresenter: PaymentPresenterProtocol {
         let agreementViewController = AgreementViewController()
         agreementViewController.hidesBottomBarWhenPushed = true
         self.view?.navigateToAgreementViewController(viewController: agreementViewController)
+    }
+    
+    func handlePayButtonTapped() {
+        guard let indexCryptocurrency = self.selectedCryprocurrncy else {
+            view?.selectedCurrencyErrorAlert()
+            return
+        }
+        
+        view?.showLoading()
+        
+        servicesAssembly.paymentService.payForOrder(cryptocurrencyIndex: indexCryptocurrency) { [weak self] result in
+            guard let self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    if success {
+                        self.cleaningCart()
+                        self.view?.hideLoading()
+                        self.showPaymentSeccessViewController()
+                    } else {
+                        self.view?.hideLoading()
+                        self.view?.payForOrderErrorAlert()
+                        print("Failure. The server has been rejected.")
+                    }
+                case .failure(let error):
+                    self.view?.hideLoading()
+                    self.view?.payForOrderErrorAlert()
+                    print("Request error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func showPaymentSeccessViewController() {
+        let paymentSuccessViewController = PaymentSuccessViewController()
+        paymentSuccessViewController.modalPresentationStyle = .overFullScreen
+        view?.navigateToPaymentSuccessViewController(viewController: paymentSuccessViewController)
+    }
+    
+    private func cleaningCart() {
+        servicesAssembly.orderService.cleaningCart { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success:
+                self.clearCartClosure?()
+            case.failure(let error):
+                print("Could not empty the cart: \(error.localizedDescription)")
+            }
+        }
     }
 }
