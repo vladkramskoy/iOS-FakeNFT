@@ -4,11 +4,18 @@ import Foundation
 //MARK: - Protocol
 protocol NftCatalogPresenter {
     func viewDidLoad()
+    func sortCollections(by option: SortOption)
 }
 
 //MARK: - State
 enum NftCatalogState {
     case initial, loading, failed(Error), data([NftCollection])
+}
+
+//MARK: - SortOption
+enum SortOption {
+    case byName
+    case byNftCount
 }
 
 //MARK: - NftCatalogPresenterImpl
@@ -21,6 +28,8 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
             stateDidChanged()
         }
     }
+    
+    private var nftCollections: [NftCollection] = []
     
     //MARK: - Public Properties
     weak var view: NftCatalogView?
@@ -35,6 +44,16 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
         state = .loading
     }
     
+    func sortCollections(by option: SortOption) {
+            switch option {
+            case .byName:
+                nftCollections.sort { $0.name < $1.name }
+            case .byNftCount:
+                nftCollections.sort { $0.nfts.count < $1.nfts.count }
+            }
+            updateViewWithSortedCollections()
+        }
+    
     //MARK: - Private Functions
     private func stateDidChanged() {
         switch state {
@@ -45,8 +64,8 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
             loadNftCollections()
         case .data(let nftCollections):
             view?.hideLoading()
-            let cellModels = nftCollections.map { NftCatalogCellModel(name: $0.name, cover: $0.cover, id: $0.id, nfts: $0.nfts)}
-            view?.displayCells(cellModels)
+            self.nftCollections = nftCollections
+            updateViewWithSortedCollections()
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
@@ -79,4 +98,9 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
             self?.state = .loading
         }
     }
+    
+    private func updateViewWithSortedCollections() {
+            let cellModels = nftCollections.map { NftCatalogCellModel(name: $0.name, cover: $0.cover, id: $0.id, nfts: $0.nfts)}
+            view?.displayCells(cellModels)
+        }
 }

@@ -65,16 +65,6 @@ final class NftCatalogViewController: UIViewController {
     }
     
     //MARK: - Private methods
-    private func sortByName() {
-        cellModels.sort { $0.name < $1.name }
-        nftTableView.reloadData()
-    }
-    
-    private func sortByNftCount() {
-        cellModels.sort { $0.nfts.count < $1.nfts.count }
-        nftTableView.reloadData()
-    }
-    
     @objc private func sortNftCollections() {
         let alertController = UIAlertController(
             title: nil,
@@ -82,11 +72,11 @@ final class NftCatalogViewController: UIViewController {
             preferredStyle: .actionSheet)
         
         let sortByNameAction = UIAlertAction(title: Constants.alertAction1, style: .default) { _ in
-            self.sortByName()
+            self.presenter.sortCollections(by: .byName)
         }
         
         let sortByNftCountAction = UIAlertAction(title: Constants.alertAction2, style: .default) { _ in
-            self.sortByNftCount()
+            self.presenter.sortCollections(by: .byNftCount)
         }
         
         let cancelAction = UIAlertAction(title: Constants.alertCancel, style: .cancel)
