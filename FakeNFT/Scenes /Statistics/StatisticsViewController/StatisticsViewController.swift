@@ -1,16 +1,6 @@
 import UIKit
 import ProgressHUD
 
-protocol StatisticsView: AnyObject {
-    func showLoadingIndicator()
-    func hideLoadingIndicator()
-    func updateTableView()
-    func showErrorAlert()
-}
-
-import UIKit
-import ProgressHUD
-
 final class StatisticsViewController: UIViewController, StatisticsView {
     
     private var statisticsServiceObserver: NSObjectProtocol?
@@ -27,6 +17,7 @@ final class StatisticsViewController: UIViewController, StatisticsView {
         tableView.dataSource = self
         tableView.rowHeight = 88
         tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
         tableView.register(StatisticsTableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
@@ -96,26 +87,39 @@ final class StatisticsViewController: UIViewController, StatisticsView {
     }
     
     func showLoadingIndicator() {
-        ProgressHUD.show()
+        LoadingIndicator.show()
     }
     
     func hideLoadingIndicator() {
-        ProgressHUD.dismiss()
+        LoadingIndicator.hide()
     }
     
     @objc
     private func sortButtonDidTap() {
-        let alertController = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        let alertController = UIAlertController(
+            title: NSLocalizedString("Statistics.sortAlert.title", comment: "Title for sort alert"),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
         
-        let sortByNameAction = UIAlertAction(title: "По имени", style: .default) { [weak self] _ in
+        let sortByNameAction = UIAlertAction(
+            title: NSLocalizedString("Statistics.sortAlert.name", comment: "Sort by name"),
+            style: .default
+        ) { [weak self] _ in
             self?.presenter.sortUsers(by: .name)
         }
         
-        let sortByRatingAction = UIAlertAction(title: "По рейтингу", style: .default) { [weak self] _ in
+        let sortByRatingAction = UIAlertAction(
+            title: NSLocalizedString("Statistics.sortAlert.rating", comment: "Sort by rating"),
+            style: .default
+        ) { [weak self] _ in
             self?.presenter.sortUsers(by: .rating)
         }
         
-        let closeAction = UIAlertAction(title: "Закрыть", style: .cancel)
+        let closeAction = UIAlertAction(
+            title: NSLocalizedString("Statistics.sortAlert.close", comment: "Close the alert"),
+            style: .cancel
+        )
         
         alertController.addAction(sortByNameAction)
         alertController.addAction(sortByRatingAction)
@@ -140,4 +144,20 @@ extension StatisticsViewController: UITableViewDataSource {
 }
 
 extension StatisticsViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showLoadingIndicator()
+        let viewController = UserCardViewController()
+        let user = presenter.retrieveUsers()[indexPath.row]
+        viewController.configure(for: user)
+        
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        
+        tableView.isUserInteractionEnabled = false
+        present(navigationController, animated: true) { [weak self] in
+            self?.hideLoadingIndicator()
+            tableView.isUserInteractionEnabled = true
+        }
+    }
 }

@@ -4,6 +4,8 @@ final class StatisticsNetworkService {
     
     static let shared = StatisticsNetworkService()
     
+    private init() {}
+    
     func fetchUsers(completion: @escaping (Result<[User], Error>) -> Void) {
         assert(Thread.isMainThread, "Must be called on the main thread")
         

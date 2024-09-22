@@ -3,14 +3,14 @@ import UIKit
 
 final class StatisticsTableViewCell: UITableViewCell {
     
-    private var indexLabel = {
+    private lazy var indexLabel = {
         let label = UILabel()
         label.font = UIFont.caption1
         label.textAlignment = .center
         return label
     }()
     
-    private var profileImageView = {
+    private lazy var profileImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 12
@@ -18,20 +18,20 @@ final class StatisticsTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    private var nameLabel = {
+    private lazy var nameLabel = {
         let label = UILabel()
         label.font = UIFont.headline3
         return label
     }()
     
-    private var nftCountLabel = {
+    private lazy var nftCountLabel = {
         let label = UILabel()
         label.font = UIFont.headline3
         label.textAlignment = .center
         return label
     }()
     
-    private var cellBackgroundImageView = {
+    private lazy var cellBackgroundImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .lightGray
         imageView.layer.masksToBounds = true

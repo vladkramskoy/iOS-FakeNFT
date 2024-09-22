@@ -5,3 +5,10 @@
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
+"Statistics.sortAlert.title" = "Сортировка";
+"Statistics.sortAlert.name" = "По имени";
+"Statistics.sortAlert.rating" = "По рейтингу";
+"Statistics.sortAlert.close" = "Закрыть";
+"Statistics.Collection.noNft" = "У пользователя еще нет NFT";
+"Statistics.Collection.title" = "Коллекция NFT";
+"Statistics.userCard.website" = "Перейти на сайт пользователя";
