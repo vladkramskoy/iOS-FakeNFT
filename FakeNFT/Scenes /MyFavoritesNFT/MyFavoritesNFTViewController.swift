@@ -9,7 +9,9 @@ import UIKit
 
 protocol MyFavoritesNFTViewControllerProtocol: AnyObject, LoadingView {
     func showMyNFT(isEmpty: Bool)
-    func showErrorAlert(countNftError: Int)
+    func showErrorLoadNftAlert(countNftError: Int)
+    func delete(likeId: String)
+    func showErrorRemoveLikeAlert()
 }
 
 final class MyFavoritesNFTViewController: UIViewController, MyFavoritesNFTViewControllerProtocol {
@@ -111,6 +113,13 @@ final class MyFavoritesNFTViewController: UIViewController, MyFavoritesNFTViewCo
         }
     }
     
+    func delete(likeId: String) {
+        favoritesCollectionView.isHidden = true
+        navigationItem.title?.removeAll()
+        showLoading()
+        myFavoritesNFTPresenter.deleteNFT(likeId: likeId)
+    }
+    
     // MARK: - Private Methods
     private func addConstraintFavoritesCollectionView() {
         NSLayoutConstraint.activate(
@@ -175,7 +184,8 @@ extension MyFavoritesNFTViewController: UICollectionViewDataSource {
             name: nft.name,
             idNFT: nft.id,
             priceNFT: nft.price,
-            star: nft.rating
+            star: nft.rating,
+            delegate: self
         )
         return cell
     }
@@ -201,10 +211,24 @@ extension MyFavoritesNFTViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - UIAlertController
 extension MyFavoritesNFTViewController {
-    func showErrorAlert(countNftError: Int) {
+    func showErrorLoadNftAlert(countNftError: Int) {
         let alert = UIAlertController(
             title: nil,
             message: "\(LocalizedText.errorAlertMessage) \(countNftError) NFT",
+            preferredStyle: .actionSheet)
+        
+        let cancelAction = UIAlertAction(
+            title: LocalizedText.okButton,
+            style: .cancel
+        )
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    
+    func showErrorRemoveLikeAlert() {
+        let alert = UIAlertController(
+            title: nil,
+            message: LocalizedText.errorAlertRemoveLikeMessage,
             preferredStyle: .actionSheet)
         
         let cancelAction = UIAlertAction(

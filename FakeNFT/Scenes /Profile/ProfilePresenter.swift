@@ -55,6 +55,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     func getMyFavoritesNftController() -> MyFavoritesNFTViewController {
         let myFavoritesNFTPresenter = MyFavoritesNFTPresenter(
             nftService: nftService,
+            editProfileServices: editProfileServices,
             myFavoritesNFTIDArray: profileData?.likes ?? []
         )
         let myFavoritesNFT = MyFavoritesNFTViewController(myFavoritesNFTPresenter: myFavoritesNFTPresenter)

@@ -73,6 +73,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
     
     //MARK: - Private Property
     private var idNFT: String?
+    weak private var delegate: MyFavoritesNFTViewControllerProtocol?
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -129,7 +130,8 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
         name: String,
         idNFT: String,
         priceNFT: Float,
-        star: Int
+        star: Int,
+        delegate: MyFavoritesNFTViewControllerProtocol
     ) {
         imageNFT.kf.setImage(with: image)
         nameNFT.text = name
@@ -139,7 +141,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
         formatter.currencyCode = "ETH"
         price.text = formatter.string(from: NSNumber(value: priceNFT)) ?? "0"
         self.idNFT = idNFT
-        
+        self.delegate = delegate
         addStarInRating(countStar: star)
     }
     
@@ -232,7 +234,12 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
     }
     
     @objc private func clickHeartButton(){
-        //TODO: - add body
+        guard let delegate, let idNFT else {
+            assertionFailure("clickHeartButton")
+            delegate?.showErrorRemoveLikeAlert()
+            return
+        }
+        delegate.delete(likeId: idNFT)
     }
 }
 

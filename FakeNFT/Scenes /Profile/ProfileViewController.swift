@@ -120,7 +120,13 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         
         self.showLoading()
         presenter.loadProfile()
-        updateProfile()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        hideViewElements()
+        self.showLoading()
+        presenter.loadProfile()
     }
     
     func updateProfile() {

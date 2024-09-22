@@ -11,18 +11,25 @@ protocol MyFavoritesNFTPresenterProtocol {
     func loadAllMyFavoritesNFT()
     func countMyFavoritesNFT() -> Int
     func getFavoritesNFT(indexArray: Int) -> Nft
+    func deleteNFT(likeId: String)
 }
 
 final class MyFavoritesNFTPresenter: MyFavoritesNFTPresenterProtocol {
     weak var myFavoritesNFTViewController: MyFavoritesNFTViewControllerProtocol?
     
     private var nftService: NftService
+    private var editProfileServices: EditProfileServices
     private var myFavoritesNFTIDArray: [String]
     private var myFavoritesNFTArray: [Nft] = []
     private var countLoadedNFT = 0
     
-    init(nftService: NftService, myFavoritesNFTIDArray: [String]) {
+    init(
+        nftService: NftService,
+        editProfileServices: EditProfileServices,
+        myFavoritesNFTIDArray: [String]
+    ) {
         self.nftService = nftService
+        self.editProfileServices = editProfileServices
         self.myFavoritesNFTIDArray = myFavoritesNFTIDArray
     }
     
@@ -45,6 +52,30 @@ final class MyFavoritesNFTPresenter: MyFavoritesNFTPresenterProtocol {
         myFavoritesNFTArray[indexArray]
     }
     
+    func deleteNFT(likeId: String) {
+        guard let indexRemoveLike = myFavoritesNFTIDArray.firstIndex(of: likeId) else {
+            return
+        }
+        myFavoritesNFTIDArray.remove(at: indexRemoveLike)
+        editProfileServices.sendEditProfileRequest(
+            name: nil,
+            description: nil,
+            website: nil,
+            avatar: nil,
+            likes: myFavoritesNFTIDArray
+        ){[weak self] result in
+            switch result {
+            case .success (let profile):
+                self?.myFavoritesNFTIDArray = profile.likes
+                self?.myFavoritesNFTArray = []
+                self?.loadAllMyFavoritesNFT()
+            case .failure (let error):
+                self?.myFavoritesNFTViewController?.showErrorRemoveLikeAlert()
+                assertionFailure("\(error)")
+            }
+        }
+    }
+    
     private func loadNft(id: String) {
         nftService.loadNft(id: id) {[weak self] result in
             guard let self else {
@@ -62,9 +93,9 @@ final class MyFavoritesNFTPresenter: MyFavoritesNFTPresenterProtocol {
                 self.myFavoritesNFTViewController?.showMyNFT(isEmpty: self.myFavoritesNFTArray.isEmpty)
                 let countNftError = self.myFavoritesNFTIDArray.count - self.myFavoritesNFTArray.count
                 if countNftError > 0 {
-                    self.myFavoritesNFTViewController?.showErrorAlert(countNftError: countNftError)
+                    self.myFavoritesNFTViewController?.showErrorLoadNftAlert(countNftError: countNftError)
                 }
             }
         }
-    }    
+    }
 }

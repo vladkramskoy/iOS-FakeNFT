@@ -108,6 +108,11 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Alert text"
     )
+    static let errorAlertRemoveLikeMessage = NSLocalizedString(
+        "My.favorites.NFT.error.remove.like.alert.message",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
     static let emptyFavoritesNFT = NSLocalizedString(
         "My.favorites.NFT.empty.NFT",
         tableName: "Profile",
