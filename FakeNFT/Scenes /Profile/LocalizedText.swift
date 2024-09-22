@@ -113,6 +113,11 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Alert text"
     )
+    static let errorWebViewAlertMessage = NSLocalizedString(
+        "WebView.alert.message",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
     static let emptyFavoritesNFT = NSLocalizedString(
         "My.favorites.NFT.empty.NFT",
         tableName: "Profile",

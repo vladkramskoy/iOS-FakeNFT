@@ -29,3 +29,4 @@
 "My.favorites.NFT.empty.NFT" = "У Вас ещё нет избранных NFT";
 "My.favorites.NFT.navbar.title" = "Избранные NFT";
 "My.favorites.NFT.error.remove.like.alert.message" = "Ошибка удаления лайка";
+"WebView.alert.message" = "Укажите корректную ссылку";

@@ -298,6 +298,15 @@ extension ProfileViewController: UITableViewDelegate {
             let nc = UINavigationController(rootViewController: myFavoritesNFTc)
             nc.modalPresentationStyle = .fullScreen
             present(nc, animated: true)
+        case 2:
+            if let url = URL(string: presenter.profileData?.website ?? "") {
+                let wv = WebViewController(url: url)
+                let nc = UINavigationController(rootViewController: wv)
+                nc.modalPresentationStyle = .fullScreen
+                present(nc, animated: true)
+            } else {
+                showErrorWebViewAlert()
+            }
         default: break
         }
         tableView.deselectRow(at: indexPath, animated: true)
@@ -320,5 +329,22 @@ extension ProfileViewController: UITableViewDataSource {
         let text = presenter.getTextCell(number: indexPath.row)
         cell.setTextInCell(text: text)
         return cell
+    }
+}
+
+//MARK: - UIAlertController
+extension ProfileViewController {
+    func showErrorWebViewAlert() {
+        let alert = UIAlertController(
+            title: nil,
+            message: LocalizedText.errorWebViewAlertMessage,
+            preferredStyle: .actionSheet)
+        
+        let cancelAction = UIAlertAction(
+            title: LocalizedText.okButton,
+            style: .cancel
+        )
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }
