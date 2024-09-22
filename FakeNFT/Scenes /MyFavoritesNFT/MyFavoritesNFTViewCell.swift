@@ -17,7 +17,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
     }()
     
     private lazy var heartButton: UIButton = {
-        guard let image = UIImage(named: "heart.fill") else {
+        guard let image = UIImage(systemName: "heart.fill") else {
             assertionFailure("error create image heartButton")
             return UIButton()
         }
@@ -71,6 +71,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
         return view
     }()
     
+    //MARK: - Private Property
     private var idNFT: String?
     
     // MARK: - Initializers
@@ -115,6 +116,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
         
         addConstraintImageNFT()
         addConstraintInfoStack()
+        addConstraintHeartButton()
     }
     
     required init?(coder: NSCoder) {

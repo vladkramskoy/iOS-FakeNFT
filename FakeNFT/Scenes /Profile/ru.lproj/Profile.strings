@@ -26,3 +26,5 @@
 "My.NFT.alert.name" = "По названию";
 "My.NFT.alert.close" = "Закрыть";
 "My.NFT.error.alert.message" = "Не удалось загрузить";
+"My.favorites.NFT.empty.NFT" = "У Вас ещё нет избранных NFT";
+"My.favorites.NFT.navbar.title" = "Избранные NFT";

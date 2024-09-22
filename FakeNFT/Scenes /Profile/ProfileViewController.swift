@@ -287,6 +287,11 @@ extension ProfileViewController: UITableViewDelegate {
             let nc = UINavigationController(rootViewController: myNFTc)
             nc.modalPresentationStyle = .fullScreen
             present(nc, animated: true)
+        case 1:
+            let myFavoritesNFTc = presenter.getMyFavoritesNftController()
+            let nc = UINavigationController(rootViewController: myFavoritesNFTc)
+            nc.modalPresentationStyle = .fullScreen
+            present(nc, animated: true)
         default: break
         }
         tableView.deselectRow(at: indexPath, animated: true)

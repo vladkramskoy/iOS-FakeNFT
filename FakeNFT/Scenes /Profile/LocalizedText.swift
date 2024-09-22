@@ -108,4 +108,14 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Alert text"
     )
+    static let emptyFavoritesNFT = NSLocalizedString(
+        "My.favorites.NFT.empty.NFT",
+        tableName: "Profile",
+        comment: "Text label"
+    )
+    static let myFavoritesNFTNavbarTitle = NSLocalizedString(
+        "My.favorites.NFT.navbar.title",
+        tableName: "Profile",
+        comment: "Text title"
+    )
 }

@@ -128,20 +128,6 @@ final class MyNFTViewController: UIViewController, MyNFTViewControllerProtocol {
         tableMyNFT.reloadData()
     }
     
-    func showErrorAlert(countNftError: Int) {
-        let alert = UIAlertController(
-            title: nil,
-            message: "\(LocalizedText.errorAlertMessage) \(countNftError) NFT",
-            preferredStyle: .actionSheet)
-        
-        let cancelAction = UIAlertAction(
-            title: LocalizedText.okButton,
-            style: .cancel
-        )
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
-    
     // MARK: - Private Methods
     private func addConstraintTableMyNFT() {
         NSLayoutConstraint.activate(
@@ -270,5 +256,19 @@ extension MyNFTViewController {
             alert.addAction(action)
         }
         return alert
+    }
+    
+    func showErrorAlert(countNftError: Int) {
+        let alert = UIAlertController(
+            title: nil,
+            message: "\(LocalizedText.errorAlertMessage) \(countNftError) NFT",
+            preferredStyle: .actionSheet)
+        
+        let cancelAction = UIAlertAction(
+            title: LocalizedText.okButton,
+            style: .cancel
+        )
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }
