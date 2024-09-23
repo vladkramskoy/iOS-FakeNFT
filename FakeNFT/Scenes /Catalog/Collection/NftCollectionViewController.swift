@@ -2,8 +2,10 @@
 import UIKit
 
 protocol NftCollectionView: AnyObject, ErrorView, LoadingView {
-    func displayCells(_ cellModel: [NftCellModel])
+    func displayCells(_ cellModel: [NftCellModel], with myFavoritesNFTID: [String], and order: [String])
     func display(_ model: NftCollectionModel)
+    func displayLike(_ favoritesNFTId: [String]?)
+    func displayOrder(_ orderNFTId: [String]?)
 }
 
 //MARK: - NftCollectionViewController
@@ -22,6 +24,8 @@ final class NftCollectionViewController: UIViewController {
     private let presenter: NftCollectionPresenter
     private var collectionModel: NftCollectionModel?
     private var nftCellModel: [NftCellModel] = []
+    private var favoritesNFTId: [String] = []
+    private var orderNFTId: [String] = []
     
     //MARK: - Public Properties
     lazy var activityIndicator = UIActivityIndicatorView()
@@ -80,7 +84,8 @@ extension NftCollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: NftCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         let cellModel = nftCellModel[indexPath.item]
-        cell.configure(cellModel: cellModel)
+        cell.configure(cellModel, favoritesNFTId, orderNFTId)
+        cell.delegate = self
         return cell
     }
     
@@ -118,18 +123,41 @@ extension NftCollectionViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - NftCatalogView
 extension NftCollectionViewController: NftCollectionView {
+    func displayOrder(_ orderNFTId: [String]?) {
+        self.orderNFTId = orderNFTId ?? [""]
+        nftsCollectionView.reloadData()
+    }
+    
+    func displayLike(_ myFavoritesNFTID: [String]?) {
+        self.favoritesNFTId = myFavoritesNFTID ?? [""]
+        nftsCollectionView.reloadData()
+    }
+    
     func display(_ model: NftCollectionModel) {
         self.collectionModel = model
         nftsCollectionView.reloadData()
     }
     
-    func displayCells(_ cellModel: [NftCellModel]) {
+    func displayCells(_ cellModel: [NftCellModel], with myFavoritesNFTID: [String], and order: [String]) {
         guard !cellModel.isEmpty else { return }
-        
+        self.favoritesNFTId = myFavoritesNFTID
+        self.orderNFTId = order
         nftCellModel.append(contentsOf: cellModel)
         nftsCollectionView.reloadData()
     }
 }
+
+//MARK: - NftCellDelegate
+extension NftCollectionViewController: NftCellDelegate {
+    func nftCellDidUpdateLikeStatus(nftId: String) {
+        presenter.updateLikeStatus(for: nftId)
+    }
+    
+    func nftCellDidUpdateOrderStatus(nftId: String) {
+        presenter.updateOrderStatus(for: nftId)
+    }
+}
+
 
 //MARK: - AutoLayout
 extension NftCollectionViewController {
@@ -152,6 +180,6 @@ extension NftCollectionViewController {
             backwardButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
             backwardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
         ])
-        activityIndicator.constraintCenters(to: nftsCollectionView)
+        activityIndicator.constraintCenters(to: view)
     }
 }

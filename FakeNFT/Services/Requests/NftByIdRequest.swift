@@ -14,3 +14,17 @@ struct NFTRequest: NetworkRequest {
     }
     var dto: Dto?
 }
+
+struct ProfileRequest: NetworkRequest {
+    var endpoint: URL? {
+        URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1")
+    }
+    var dto: Dto?
+}
+
+struct OrderRequest: NetworkRequest {
+    var endpoint: URL? {
+        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
+    }
+    var dto: Dto?
+}

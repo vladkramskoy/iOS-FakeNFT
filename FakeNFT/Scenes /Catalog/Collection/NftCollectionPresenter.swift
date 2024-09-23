@@ -4,6 +4,8 @@ import Foundation
 //MARK: - Protocol
 protocol NftCollectionPresenter {
     func viewDidLoad()
+    func updateLikeStatus(for likeId: String)
+    func updateOrderStatus(for orderId: String)
 }
 
 //MARK: - State
@@ -16,6 +18,10 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
     
     //MARK: - Private Properties
     private let service: NftService
+    private let editProfileServices: EditProfileServices
+    private let profileService: ProfileService
+    private let orderService: OrderService
+    private let editOrderService: EditOrderService
     private var state = NftCollectionState.initial {
         didSet {
             stateDidChanged()
@@ -24,14 +30,25 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
     private let nftCollectionId: String
     private var nftIds: [String] = []
     private var nftCellModels: [NftCellModel] = []
+    private var favoritesNFTId: [String] = []
+    private var orderNFTId: [String] = []
     
     //MARK: - Public Properties
     weak var view: NftCollectionView?
     
     //MARK: - Init
-    init(service: NftService, nftCollectionId: String) {
+    init(service: NftService,
+         editProfileServices: EditProfileServices,
+         profileService: ProfileService,
+         orderService: OrderService,
+         editOrderService: EditOrderService,
+         nftCollectionId: String) {
         self.service = service
+        self.editProfileServices = editProfileServices
+        self.profileService = profileService
         self.nftCollectionId = nftCollectionId
+        self.orderService = orderService
+        self.editOrderService = editOrderService
     }
     
     //MARK: - Public Functions
@@ -47,6 +64,8 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
         case .loading:
             view?.showLoading()
             loadNftCollections(with: nftCollectionId)
+            loadFavoritesNfts()
+            loadOrder()
         case .collectionData(let nftCollection):
             view?.hideLoading()
             let collectionModel = NftCollectionModel(
@@ -64,7 +83,9 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
                 rating: nft.rating,
                 price: nft.price,
                 id: nft.id)
-            view?.displayCells([nftCellModel])
+            loadFavoritesNfts()
+            loadOrder()
+            view?.displayCells([nftCellModel], with: favoritesNFTId, and: orderNFTId)
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
@@ -97,7 +118,6 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
                     price: nft.price,
                     id: nft.id
                 )
-                
                 self?.nftCellModels.append(nftCellModel)
                 self?.state = .nftData(nft)
             case .failure(let error):
@@ -106,6 +126,71 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
         }
     }
     
+    private func loadFavoritesNfts() {
+        profileService.loadProfile { [weak self] result in
+            switch result {
+            case .success(let profile):
+                self?.favoritesNFTId = profile.likes
+            case.failure(let error):
+                self?.state = .failed(error)
+            }
+        }
+    }
+    
+    private func loadOrder() {
+        orderService.loadOrder { [weak self] result in
+            switch result {
+            case .success(let order):
+                self?.orderNFTId = order.nfts
+            case.failure(let error):
+                self?.state = .failed(error)
+            }
+        }
+    }
+    
+    func updateOrderStatus(for orderId: String) {
+        if let index = orderNFTId.firstIndex(of: orderId) {
+            orderNFTId.remove(at: index)
+        } else {
+            orderNFTId.append(orderId)
+        }
+        orderNFTId = Array(Set(orderNFTId))
+        editOrderService.sendEditOrderRequest(
+            nfts: orderNFTId,
+            id: nil) { [weak self] result in
+                switch result {
+                case .success(let order):
+                    self?.orderNFTId = order.nfts
+                    self?.view?.displayOrder(self?.orderNFTId)
+                case.failure(let error):
+                    self?.state = .failed(error)
+                }
+            }
+    }
+    
+    func updateLikeStatus(for likeId: String) {
+        if let index = favoritesNFTId.firstIndex(of: likeId) {
+            favoritesNFTId.remove(at: index)
+        } else {
+            favoritesNFTId.append(likeId)
+        }
+        favoritesNFTId = Array(Set(favoritesNFTId))
+        editProfileServices.sendEditProfileRequest(
+            name: nil,
+            description: nil,
+            website: nil,
+            avatar: nil,
+            likes: favoritesNFTId
+        ) { [weak self] result in
+            switch result {
+            case .success(let profile):
+                self?.favoritesNFTId = profile.likes
+                self?.view?.displayLike(self?.favoritesNFTId)
+            case .failure(let error):
+                self?.state = .failed(error)
+            }
+        }
+    }
     
     private func makeErrorModel(_ error: Error) -> ErrorModel {
         let message: String

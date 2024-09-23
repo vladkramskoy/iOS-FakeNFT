@@ -127,9 +127,9 @@ extension NftCatalogViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let nftId = cellModels[indexPath.section].id
+        let nftCollectionId = cellModels[indexPath.section].id
         let assembly = NftCollectionAssembly(servicesAssembler: servicesAssembly)
-        let nftCollectionViewController = assembly.build(with: nftId)
+        let nftCollectionViewController = assembly.build(with: nftCollectionId)
         navigationController?.pushViewController(nftCollectionViewController, animated: true)
     }
     
@@ -169,3 +169,4 @@ extension NftCatalogViewController {
         activityIndicator.constraintCenters(to: view)
     }
 }
+
