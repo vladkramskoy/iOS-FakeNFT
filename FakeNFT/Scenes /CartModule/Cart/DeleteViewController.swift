@@ -30,7 +30,7 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
     
     private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
-        messageLabel.text = "Вы уверены, что хотите \nудалить объект из корзины?"
+        messageLabel.text = Localizable.deleteWarning
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 2
         messageLabel.font = UIFont.caption2
@@ -49,7 +49,7 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
     
     private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton(type: .system)
-        deleteButton.setTitle("Удалить", for: .normal)
+        deleteButton.setTitle(Localizable.deleteDeleteButton, for: .normal)
         deleteButton.tintColor = UIColor.textRed
         deleteButton.titleLabel?.font = UIFont.bodyRegular
         deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
@@ -61,7 +61,7 @@ final class DeleteViewController: UIViewController, DeleteViewProtocol {
     
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton(type: .system)
-        cancelButton.setTitle("Вернуться", for: .normal)
+        cancelButton.setTitle(Localizable.deleteCancelButton, for: .normal)
         cancelButton.tintColor = UIColor.whiteObjectColor
         cancelButton.titleLabel?.font = UIFont.bodyRegular
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)

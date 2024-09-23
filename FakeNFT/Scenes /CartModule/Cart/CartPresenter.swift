@@ -68,7 +68,7 @@ final class CartPresenter: CartPresenterProtocol {
                 print("Позиция \(id) удалена")
             case .failure(_):
                 view?.hideLoading()
-                view?.showDeletionErrorAlert()
+                view?.showFailedDeleteFromCartAlert()
             }
         }
     }
@@ -83,7 +83,8 @@ final class CartPresenter: CartPresenterProtocol {
         self.cartNfts = []
         self.view?.checkArrayAndShowPlaceholder()
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             self.view?.tableView.reloadData()
         }
     }
@@ -91,7 +92,7 @@ final class CartPresenter: CartPresenterProtocol {
     func handlePaymentButtonTapped() {
         let paymentViewController = PaymentViewController()
         let paymentPresenter = PaymentPresenter(view: paymentViewController, servicesAssembly: self.servicesAssembly)
-        paymentViewController.title = "Выберите способ оплаты"
+        paymentViewController.title = Localizable.paymentTitle
         paymentViewController.hidesBottomBarWhenPushed = true
         paymentViewController.presenter = paymentPresenter
         paymentViewController.presenter?.clearCartClosure = getClearCartClosure
@@ -131,7 +132,7 @@ final class CartPresenter: CartPresenterProtocol {
                 print("Error in receiving NFT details:", error)
                 
                 self.view?.hideLoading()
-                self.view?.showErrorAlert()
+                self.view?.showFailedLoadingCartAlert()
             }
         }
     }
@@ -167,7 +168,7 @@ final class CartPresenter: CartPresenterProtocol {
                     remainingRequests -= 1
                     if remainingRequests == 0 {
                         self.view?.hideLoading()
-                        self.view?.showErrorAlert()
+                        self.view?.showFailedLoadingCartAlert()
                     }
                 }
             }

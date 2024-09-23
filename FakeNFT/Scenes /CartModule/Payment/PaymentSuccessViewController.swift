@@ -18,7 +18,7 @@ final class PaymentSuccessViewController: UIViewController {
     
     private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
-        messageLabel.text = "Успех! Оплата прошла, поздравляем с покупкой!"
+        messageLabel.text = Localizable.successMessage
         messageLabel.numberOfLines = 2
         messageLabel.textAlignment = .center
         messageLabel.textColor = UIColor.darkObjectColor
@@ -29,7 +29,7 @@ final class PaymentSuccessViewController: UIViewController {
     
     private lazy var returnInCatalogButton: UIButton = {
         let returnInCatalogButton = UIButton(type: .system)
-        returnInCatalogButton.setTitle("Вернуться в каталог", for: .normal)
+        returnInCatalogButton.setTitle(Localizable.successButton, for: .normal)
         returnInCatalogButton.tintColor = UIColor.whiteObjectColor
         returnInCatalogButton.titleLabel?.font = UIFont.bodyBold
         returnInCatalogButton.addTarget(self, action: #selector(returnInCatalogButtonTapped), for: .touchUpInside)
@@ -51,7 +51,7 @@ final class PaymentSuccessViewController: UIViewController {
         view.addSubview(returnInCatalogButton)
         
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 152),
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 196),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 49),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -48),
             

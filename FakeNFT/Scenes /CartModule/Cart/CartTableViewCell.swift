@@ -49,7 +49,7 @@ final class CartTableViewCell: UITableViewCell {
     
     private lazy var priceLabel: UILabel = {
         let priceLabel = UILabel()
-        priceLabel.text = "Цена"
+        priceLabel.text = Localizable.nftCellPrice
         priceLabel.font = UIFont.caption2
         priceLabel.textColor = UIColor.darkObjectColor
         priceLabel.translatesAutoresizingMaskIntoConstraints = false

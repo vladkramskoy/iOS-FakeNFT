@@ -48,7 +48,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
                 print("Error in obtaining information about cryptocurrencies:", error)
                 
                 self.view?.hideLoading()
-                self.view?.showGetCurrencyErrorAlert()
+                self.view?.showFailedLoadingPaymentMethodsAlert()
             }
         }
     }
@@ -61,7 +61,7 @@ final class PaymentPresenter: PaymentPresenterProtocol {
     
     func handlePayButtonTapped() {
         guard let indexCryptocurrency = self.selectedCryprocurrncy else {
-            view?.selectedCurrencyErrorAlert()
+            view?.showCurrencySelectionAlert()
             return
         }
         
@@ -76,22 +76,22 @@ final class PaymentPresenter: PaymentPresenterProtocol {
                     if success {
                         self.cleaningCart()
                         self.view?.hideLoading()
-                        self.showPaymentSeccessViewController()
+                        self.showPaymentSuccessViewController()
                     } else {
                         self.view?.hideLoading()
-                        self.view?.payForOrderErrorAlert()
+                        self.view?.showFailedPaymentAlert()
                         print("Failure. The server has been rejected.")
                     }
                 case .failure(let error):
                     self.view?.hideLoading()
-                    self.view?.payForOrderErrorAlert()
+                    self.view?.showFailedPaymentAlert()
                     print("Request error: \(error.localizedDescription)")
                 }
             }
         }
     }
     
-    private func showPaymentSeccessViewController() {
+    private func showPaymentSuccessViewController() {
         let paymentSuccessViewController = PaymentSuccessViewController()
         paymentSuccessViewController.modalPresentationStyle = .overFullScreen
         view?.navigateToPaymentSuccessViewController(viewController: paymentSuccessViewController)

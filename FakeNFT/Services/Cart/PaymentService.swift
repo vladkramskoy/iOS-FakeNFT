@@ -12,14 +12,14 @@ final class PaymentService {
     private let token = RequestConstants.token
     
     func fetchCryptocurrcencies(completion: @escaping (Result<[Cryptocurrency], Error>) -> Void) {
-        guard let url = URL(string: "\(baseUrl)/api/v1/currencies") else {
+        guard let url = URL(string: APIEndpoint.currencies.url(baseUrl: baseUrl)) else {
             completion(.failure(NSError(domain: "", code: -1)))
             return
         }
         
         var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -59,15 +59,15 @@ final class PaymentService {
     }
     
     func payForOrder(cryptocurrencyIndex: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
-        guard let url = URL(string: "\(baseUrl)/api/v1/orders/1/payment/\(cryptocurrencyIndex)") else {
+        guard let url = URL(string: "\(APIEndpoint.payment.url(baseUrl: baseUrl))\(cryptocurrencyIndex)") else {
             completion(.failure(NSError(domain: "", code: -1)))
             print("Invalid URL")
             return
         }
         
         var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in

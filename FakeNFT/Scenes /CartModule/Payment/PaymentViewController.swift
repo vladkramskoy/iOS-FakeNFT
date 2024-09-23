@@ -11,9 +11,9 @@ protocol PaymentViewControllerProtocol: AnyObject {
     func updateData()
     func showLoading()
     func hideLoading()
-    func showGetCurrencyErrorAlert()
-    func selectedCurrencyErrorAlert()
-    func payForOrderErrorAlert()
+    func showFailedLoadingPaymentMethodsAlert()
+    func showCurrencySelectionAlert()
+    func showFailedPaymentAlert()
     func navigateToAgreementViewController(viewController: UIViewController)
     func navigateToPaymentSuccessViewController(viewController: UIViewController)
 }
@@ -22,6 +22,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     var presenter: PaymentPresenterProtocol?
     
     private var selectedIndexPath: IndexPath?
+    private var alertPresenter: AlertPresenter?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -39,7 +40,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var payButton: UIButton = {
         let payButton = UIButton(type: .system)
-        payButton.setTitle("Оплатить", for: .normal)
+        payButton.setTitle(Localizable.paymentPayButton, for: .normal)
         payButton.tintColor = UIColor.whiteObjectColor
         payButton.titleLabel?.font = UIFont.bodyBold
         payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
@@ -51,7 +52,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var agreementLabel: UILabel = {
         let agreementLabel = UILabel()
-        agreementLabel.text = "Совершая покупку, вы соглашаетесь с условиями"
+        agreementLabel.text = Localizable.paymentAgreementLabel
         agreementLabel.textColor = UIColor.darkObjectColor
         agreementLabel.font = UIFont.caption2
         agreementLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +61,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var agreementButton: UIButton = {
         let agreementButton = UIButton(type: .system)
-        agreementButton.setTitle("Пользовательского соглашения", for: .normal)
+        agreementButton.setTitle(Localizable.paymentAgreementButton, for: .normal)
         agreementButton.contentHorizontalAlignment = .left
         agreementButton.tintColor = .systemBlue
         agreementButton.titleLabel?.font = UIFont.caption2
@@ -88,10 +89,10 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadData()
         setupUI()
         setupNavigationBar()
+        alertPresenter = AlertPresenter(viewController: self)
     }
     
     func updateData() {
@@ -109,52 +110,35 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         present(viewController, animated: true)
     }
     
-    func showGetCurrencyErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.loadData()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showFailedLoadingPaymentMethodsAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { _ in }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.loadData()
+            }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertLoadingCurrenciesErrorMessage, actions: [cancelAction, retryAction])
         }
     }
     
-    func payForOrderErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось произвести оплату", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.presenter?.handlePayButtonTapped()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showFailedPaymentAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { _ in }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.presenter?.handlePayButtonTapped()
+            }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertPayErrorMessage, actions: [cancelAction, retryAction])
         }
     }
     
-    func selectedCurrencyErrorAlert() {
-        let alertController = UIAlertController(title: "Выберите метод оплаты", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
-        
-        alertController.addAction(cancelAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showCurrencySelectionAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let okAction = alertPresenter.createAction(title: Localizable.alertOkayButton, style: .default) { _ in }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertSelectPaymentMethodErrorMessage, actions: [okAction])
         }
     }
     

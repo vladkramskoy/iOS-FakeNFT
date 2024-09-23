@@ -15,8 +15,8 @@ protocol CartViewControllerProtocol: AnyObject {
     func navigateToPaymentViewController(viewController: UIViewController)
     func showLoading()
     func hideLoading()
-    func showErrorAlert()
-    func showDeletionErrorAlert()
+    func showFailedLoadingCartAlert()
+    func showFailedDeleteFromCartAlert()
     func checkArrayAndShowPlaceholder()
 }
 
@@ -25,6 +25,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     private let currencySymbol = "ETH"
     private let nftLabel = "NFT"
+    private var alertPresenter: AlertPresenter?
     
     lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -39,7 +40,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     private lazy var paymentButton: UIButton = {
         let paymentButton = UIButton(type: .system)
-        paymentButton.setTitle("К оплате", for: .normal)
+        paymentButton.setTitle(Localizable.cartPaymentButton, for: .normal)
         paymentButton.tintColor = UIColor.whiteObjectColor
         paymentButton.titleLabel?.font = UIFont.bodyBold
         paymentButton.addTarget(self, action: #selector(paymentButtonTapped), for: .touchUpInside)
@@ -90,7 +91,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     private lazy var placeholderLabel: UILabel = {
         let placeholderLabel = UILabel()
-        placeholderLabel.text = "Корзина пуста"
+        placeholderLabel.text = Localizable.placeholderTextLabel
         placeholderLabel.textAlignment = .center
         placeholderLabel.textColor = UIColor.darkObjectColor
         placeholderLabel.font = UIFont.bodyBold
@@ -105,6 +106,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         loadData()
         setupUI()
         setupNavigationBar()
+        alertPresenter = AlertPresenter(viewController: self)
     }
 
     func updateView() {
@@ -128,37 +130,26 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { [weak self] _ in
-            guard let self else { return }
-            self.checkArrayAndShowPlaceholder()
-        }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.loadData()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showFailedLoadingCartAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { [weak self] _ in
+                guard let self else { return }
+                self.checkArrayAndShowPlaceholder()
+            }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.loadData()
+            }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertCartErrorMessage, actions: [cancelAction, retryAction])
         }
     }
     
-    func showDeletionErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
-        
-        alertController.addAction(cancelAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showFailedDeleteFromCartAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let okAction = alertPresenter.createAction(title: Localizable.alertOkayButton, style: .default) { _ in }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertDeleteErrorMessage, actions: [okAction])
         }
     }
     
@@ -224,22 +215,22 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     }
     
     private func showActionSheet() {
-        let actionSheet = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: Localizable.sortingTitle, message: nil, preferredStyle: .actionSheet)
         
-        actionSheet.addAction(UIAlertAction(title: "По цене", style: .default, handler: { [weak self] _ in
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingPrice, style: .default, handler: { [weak self] _ in
             guard let self else { return }
             self.presenter?.sortByPrice()
         }))
-        actionSheet.addAction(UIAlertAction(title: "По рейтингу", style: .default, handler: { [weak self] _ in
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingRating, style: .default, handler: { [weak self] _ in
             guard let self else { return }
             self.presenter?.sortByRating()
         }))
-        actionSheet.addAction(UIAlertAction(title: "По названию", style: .default, handler: { [weak self] _ in
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingName, style: .default, handler: { [weak self] _ in
             guard let self else { return }
             self.presenter?.sortByName()
         }))
         
-        actionSheet.addAction(UIAlertAction(title: "Закрыть", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingCancelButton, style: .cancel, handler: nil))
         present(actionSheet, animated: true)
     }
     
