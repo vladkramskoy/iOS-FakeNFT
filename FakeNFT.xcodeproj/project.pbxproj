@@ -48,6 +48,7 @@
 		E0121DF92CA0138300E5379B /* MyFavoritesNFTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0121DF82CA0138300E5379B /* MyFavoritesNFTViewController.swift */; };
 		E0121DFB2CA0321800E5379B /* MyFavoritesNFTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0121DFA2CA0321800E5379B /* MyFavoritesNFTPresenter.swift */; };
 		E0121DFE2CA08BD400E5379B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0121DFD2CA08BD400E5379B /* WebViewController.swift */; };
+		E0121E002CA2062100E5379B /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0121DFF2CA2062100E5379B /* UIViewController+Alert.swift */; };
 		E02C08D42C97E11600FD606F /* EditProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02C08D32C97E11600FD606F /* EditProfileRequest.swift */; };
 		E02C08D62C97E48200FD606F /* EditProfileServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02C08D52C97E48200FD606F /* EditProfileServices.swift */; };
 		E02C08D92C99F4D600FD606F /* MyNFTTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02C08D82C99F4D600FD606F /* MyNFTTableViewCell.swift */; };
@@ -128,6 +129,7 @@
 		E0121DF82CA0138300E5379B /* MyFavoritesNFTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyFavoritesNFTViewController.swift; sourceTree = "<group>"; };
 		E0121DFA2CA0321800E5379B /* MyFavoritesNFTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyFavoritesNFTPresenter.swift; sourceTree = "<group>"; };
 		E0121DFD2CA08BD400E5379B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		E0121DFF2CA2062100E5379B /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		E02C08D32C97E11600FD606F /* EditProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileRequest.swift; sourceTree = "<group>"; };
 		E02C08D52C97E48200FD606F /* EditProfileServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileServices.swift; sourceTree = "<group>"; };
 		E02C08D82C99F4D600FD606F /* MyNFTTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTTableViewCell.swift; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				3F6806D629CBC50A00B4F915 /* CellsReusingUtils.swift */,
 				3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */,
 				0CFCB74A2A780EA80009A829 /* UIView+Constraints.swift */,
+				E0121DFF2CA2062100E5379B /* UIViewController+Alert.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -605,6 +608,7 @@
 				E02C08D42C97E11600FD606F /* EditProfileRequest.swift in Sources */,
 				3F478ECF29DB474E00F6D39E /* Colors.swift in Sources */,
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
+				E0121E002CA2062100E5379B /* UIViewController+Alert.swift in Sources */,
 				E0B5B44A2C9205EF001C8D88 /* ProfileStorage.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,

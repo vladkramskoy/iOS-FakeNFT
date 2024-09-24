@@ -70,7 +70,9 @@ final class MyFavoritesNFTPresenter: MyFavoritesNFTPresenterProtocol {
                 self?.myFavoritesNFTArray = []
                 self?.loadAllMyFavoritesNFT()
             case .failure (let error):
-                self?.myFavoritesNFTViewController?.showErrorRemoveLikeAlert()
+                self?.myFavoritesNFTViewController?.showErrorAlert(
+                    message: LocalizedText.errorAlertRemoveLikeMessage
+                )
                 assertionFailure("\(error)")
             }
         }
@@ -93,7 +95,9 @@ final class MyFavoritesNFTPresenter: MyFavoritesNFTPresenterProtocol {
                 self.myFavoritesNFTViewController?.showMyNFT(isEmpty: self.myFavoritesNFTArray.isEmpty)
                 let countNftError = self.myFavoritesNFTIDArray.count - self.myFavoritesNFTArray.count
                 if countNftError > 0 {
-                    self.myFavoritesNFTViewController?.showErrorLoadNftAlert(countNftError: countNftError)
+                    self.myFavoritesNFTViewController?.showErrorAlert(
+                        message: "\(LocalizedText.errorAlertMessage) \(countNftError) \(LocalizedText.nft)"
+                    )
                 }
             }
         }

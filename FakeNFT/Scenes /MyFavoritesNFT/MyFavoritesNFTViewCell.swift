@@ -73,7 +73,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
     
     //MARK: - Private Property
     private var idNFT: String?
-    weak private var delegate: MyFavoritesNFTViewControllerProtocol?
+    private weak var delegate: MyFavoritesNFTViewControllerProtocol?
     
     // MARK: - Initializers
     override init(frame: CGRect) {
@@ -138,7 +138,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = Locale(identifier: "ru_RU")
-        formatter.currencyCode = "ETH"
+        formatter.currencyCode = LocalizedText.myFavoritesNftETH
         price.text = formatter.string(from: NSNumber(value: priceNFT)) ?? "0"
         self.idNFT = idNFT
         self.delegate = delegate
@@ -236,7 +236,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
     @objc private func clickHeartButton(){
         guard let delegate, let idNFT else {
             assertionFailure("clickHeartButton")
-            delegate?.showErrorRemoveLikeAlert()
+            delegate?.showErrorAlert(message: LocalizedText.errorAlertRemoveLikeMessage)
             return
         }
         delegate.delete(likeId: idNFT)
@@ -246,7 +246,7 @@ final class MyFavoritesNFTViewCell: UICollectionViewCell {
 extension MyFavoritesNFTViewCell {
     private enum ConstantsConstraint {
         static let imageNFTSize: CGFloat = 80
-        static let heartButtonSize: CGFloat = 29.63
+        static let heartButtonSize: CGFloat = 29
         static let infoStackLeftOffset: CGFloat = 12
         static let infoStackWidth: CGFloat = 76
         static let imageStarSize: CGFloat = 12

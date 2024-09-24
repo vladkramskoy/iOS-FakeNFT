@@ -9,9 +9,8 @@ import UIKit
 
 protocol MyFavoritesNFTViewControllerProtocol: AnyObject, LoadingView {
     func showMyNFT(isEmpty: Bool)
-    func showErrorLoadNftAlert(countNftError: Int)
     func delete(likeId: String)
-    func showErrorRemoveLikeAlert()
+    func showErrorAlert(message: String)
 }
 
 final class MyFavoritesNFTViewController: UIViewController, MyFavoritesNFTViewControllerProtocol {
@@ -206,36 +205,5 @@ extension MyFavoritesNFTViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return ConstantsConstraint.minimumLineSpacingForSectionAt
-    }
-}
-
-//MARK: - UIAlertController
-extension MyFavoritesNFTViewController {
-    func showErrorLoadNftAlert(countNftError: Int) {
-        let alert = UIAlertController(
-            title: nil,
-            message: "\(LocalizedText.errorAlertMessage) \(countNftError) NFT",
-            preferredStyle: .actionSheet)
-        
-        let cancelAction = UIAlertAction(
-            title: LocalizedText.okButton,
-            style: .cancel
-        )
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
-    
-    func showErrorRemoveLikeAlert() {
-        let alert = UIAlertController(
-            title: nil,
-            message: LocalizedText.errorAlertRemoveLikeMessage,
-            preferredStyle: .actionSheet)
-        
-        let cancelAction = UIAlertAction(
-            title: LocalizedText.okButton,
-            style: .cancel
-        )
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
     }
 }

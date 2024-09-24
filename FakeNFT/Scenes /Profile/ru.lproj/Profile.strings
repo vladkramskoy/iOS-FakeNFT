@@ -7,6 +7,7 @@
  */
 
 "Profile.myNFT" = "Мои NFT";
+"Profile.NFT" = "NFT";
 "Profile.favoriteNFT" = "Избранные NFT";
 "Profile.about.developer" = "О разработчике";
 "Edit.profile.tittle.name" = "Имя";
@@ -28,5 +29,6 @@
 "My.NFT.error.alert.message" = "Не удалось загрузить";
 "My.favorites.NFT.empty.NFT" = "У Вас ещё нет избранных NFT";
 "My.favorites.NFT.navbar.title" = "Избранные NFT";
+"My.favorites.NFT.ETH" = "ETH";
 "My.favorites.NFT.error.remove.like.alert.message" = "Ошибка удаления лайка";
 "WebView.alert.message" = "Укажите корректную ссылку";

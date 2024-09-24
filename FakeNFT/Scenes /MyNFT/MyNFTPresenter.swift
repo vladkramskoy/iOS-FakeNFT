@@ -85,7 +85,9 @@ final class MyNFTPresenter: MyNFTPresenterProtocol {
                 self.myNFTViewController?.showMyNFT(isEmpty: self.myNFTArray.isEmpty)
                 let countNftError = self.myNFTIDArray.count - self.myNFTArray.count
                 if countNftError > 0 {
-                    self.myNFTViewController?.showErrorAlert(countNftError: countNftError)
+                    self.myNFTViewController?.showErrorAlert(
+                        message: "\(LocalizedText.errorAlertMessage) \(countNftError) \(LocalizedText.nft)"
+                    )
                 }
             }
         }
