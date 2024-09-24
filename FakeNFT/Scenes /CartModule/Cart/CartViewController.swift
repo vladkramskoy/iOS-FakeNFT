@@ -8,13 +8,16 @@
 import UIKit
 
 protocol CartViewControllerProtocol: AnyObject {
+    var tableView: UITableView { get }
+    
     func updateView()
     func navigateToDeleteViewController(viewController: UIViewController)
     func navigateToPaymentViewController(viewController: UIViewController)
     func showLoading()
     func hideLoading()
-    func showErrorAlert()
-    func showDeletionErrorAlert()
+    func showFailedLoadingCartAlert()
+    func showFailedDeleteFromCartAlert()
+    func checkArrayAndShowPlaceholder()
 }
 
 final class CartViewController: UIViewController, CartViewControllerProtocol {
@@ -22,8 +25,9 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     private let currencySymbol = "ETH"
     private let nftLabel = "NFT"
+    private var alertPresenter: AlertPresenter?
     
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = UIColor.whiteObjectColor
@@ -36,7 +40,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     private lazy var paymentButton: UIButton = {
         let paymentButton = UIButton(type: .system)
-        paymentButton.setTitle("К оплате", for: .normal)
+        paymentButton.setTitle(Localizable.cartPaymentButton, for: .normal)
         paymentButton.tintColor = UIColor.whiteObjectColor
         paymentButton.titleLabel?.font = UIFont.bodyBold
         paymentButton.addTarget(self, action: #selector(paymentButtonTapped), for: .touchUpInside)
@@ -84,12 +88,25 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         return activityIndicator
     }()
-        
+    
+    private lazy var placeholderLabel: UILabel = {
+        let placeholderLabel = UILabel()
+        placeholderLabel.text = Localizable.placeholderTextLabel
+        placeholderLabel.textAlignment = .center
+        placeholderLabel.textColor = UIColor.darkObjectColor
+        placeholderLabel.font = UIFont.bodyBold
+        placeholderLabel.frame = self.view.bounds
+        placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+        placeholderLabel.isHidden = true
+        return placeholderLabel
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadData()
         setupUI()
         setupNavigationBar()
+        alertPresenter = AlertPresenter(viewController: self)
     }
 
     func updateView() {
@@ -113,34 +130,40 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось загрузить корзину", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.loadData()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func showFailedLoadingCartAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { [weak self] _ in
+                guard let self else { return }
+                self.checkArrayAndShowPlaceholder()
+            }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.loadData()
+            }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertCartErrorMessage, actions: [cancelAction, retryAction])
         }
     }
     
-    func showDeletionErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось удалить позицию. Попробуйте еще раз", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Ок", style: .default) { _ in }
-        
-        alertController.addAction(cancelAction)
-        
+    func showFailedDeleteFromCartAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let okAction = alertPresenter.createAction(title: Localizable.alertOkayButton, style: .default) { _ in }
+            
+            alertPresenter.showAlert(title: Localizable.alertDeleteErrorMessage, actions: [okAction])
+        }
+    }
+    
+    func checkArrayAndShowPlaceholder() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             
-            self.present(alertController, animated: true)
+            if presenter?.cartNfts.isEmpty ?? true {
+                placeholderLabel.isHidden = false
+                tableView.isHidden = true
+                paymentAreaView.isHidden = true
+            }
+            
+            tableView.reloadData()
         }
     }
     
@@ -149,6 +172,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
         view.addSubview(tableView)
         view.addSubview(paymentAreaView)
         view.addSubview(activityIndicator)
+        view.addSubview(placeholderLabel)
         paymentAreaView.addSubview(paymentButton)
         paymentAreaView.addSubview(nftCountLabel)
         paymentAreaView.addSubview(sumLabel)
@@ -176,19 +200,42 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
             sumLabel.bottomAnchor.constraint(equalTo: paymentAreaView.bottomAnchor, constant: -16),
             
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            placeholderLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            placeholderLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
     private func setupNavigationBar() {
         let iconImage = UIImage(named: "lineHorizontal")
-        let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(hamburgerMenuTapped))
+        let barButtonItem = UIBarButtonItem(image: iconImage, style: .plain, target: self, action: #selector(sortButtonTapped))
         barButtonItem.tintColor = UIColor.darkObjectColor
         navigationItem.rightBarButtonItem = barButtonItem
     }
     
-    @objc private func hamburgerMenuTapped() {
-        //TODO: - process code
+    private func showActionSheet() {
+        let actionSheet = UIAlertController(title: Localizable.sortingTitle, message: nil, preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingPrice, style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByPrice()
+        }))
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingRating, style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByRating()
+        }))
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingName, style: .default, handler: { [weak self] _ in
+            guard let self else { return }
+            self.presenter?.sortByName()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: Localizable.sortingCancelButton, style: .cancel, handler: nil))
+        present(actionSheet, animated: true)
+    }
+    
+    @objc private func sortButtonTapped() {
+        showActionSheet()
     }
     
     @objc private func paymentButtonTapped() {

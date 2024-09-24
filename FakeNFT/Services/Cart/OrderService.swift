@@ -12,11 +12,11 @@ final class OrderService {
     private let token = RequestConstants.token
     
     func fetchOrderNfts(completion: @escaping (Result<[String], Error>) -> Void) {
-        guard let url = URL(string: "\(baseUrl)/api/v1/orders/1") else { return }
+        guard let url = URL(string: APIEndpoint.orders.url(baseUrl: baseUrl)) else { return }
         
         var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -38,11 +38,11 @@ final class OrderService {
     }
     
     func fetchNftDetails(for id: String, completion: @escaping (Result<NftDetail, Error>) -> Void) {
-        guard let url = URL(string: "\(baseUrl)/api/v1/nft/\(id)") else { return }
+        guard let url = URL(string: "\(APIEndpoint.nft.url(baseUrl: baseUrl))\(id)") else { return }
         
         var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -95,15 +95,15 @@ final class OrderService {
             return
         }
         
-        guard let url = URL(string: "\(baseUrl)/api/v1/orders/1") else {
+        guard let url = URL(string: APIEndpoint.orders.url(baseUrl: baseUrl)) else {
             completion(.failure(NSError(domain: "", code: -1)))
             return
         }
         
         var request = URLRequest(url: url)
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.addValue(token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(HTTPHeaderValue.urlEncoded.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
         
         request.httpMethod = "PUT"
         request.httpBody = postData
@@ -122,6 +122,41 @@ final class OrderService {
             }
             
             completion(.success(updateData))
+        }
+        task.resume()
+    }
+    
+    func cleaningCart(completion: @escaping (Result<Void, Error>) -> Void) {
+        let parameters = ""
+        let postData = parameters.data(using: .utf8)
+        
+        guard let url = URL(string: APIEndpoint.orders.url(baseUrl: baseUrl)) else {
+            completion(.failure(NSError(domain: "", code: -1)))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.addValue(HTTPHeaderValue.json.rawValue, forHTTPHeaderField: HTTPHeaderField.accept.rawValue)
+        request.addValue(HTTPHeaderValue.urlEncoded.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
+        request.addValue(token, forHTTPHeaderField: HTTPHeaderField.token.rawValue)
+
+        request.httpMethod = "PUT"
+        request.httpBody = postData
+
+        let task = URLSession.shared.dataTask(with: request) { _, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                completion(.failure(NSError(domain: "", code: -1)))
+                return
+            }
+            
+            completion(.success(()))
         }
         task.resume()
     }

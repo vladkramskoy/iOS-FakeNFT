@@ -9,15 +9,20 @@ import UIKit
 
 protocol PaymentViewControllerProtocol: AnyObject {
     func updateData()
+    func showLoading()
     func hideLoading()
-    func showErrorAlert()
+    func showFailedLoadingPaymentMethodsAlert()
+    func showCurrencySelectionAlert()
+    func showFailedPaymentAlert()
     func navigateToAgreementViewController(viewController: UIViewController)
+    func navigateToPaymentSuccessViewController(viewController: UIViewController)
 }
 
 final class PaymentViewController: UIViewController, PaymentViewControllerProtocol {
     var presenter: PaymentPresenterProtocol?
     
     private var selectedIndexPath: IndexPath?
+    private var alertPresenter: AlertPresenter?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -35,7 +40,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var payButton: UIButton = {
         let payButton = UIButton(type: .system)
-        payButton.setTitle("Оплатить", for: .normal)
+        payButton.setTitle(Localizable.paymentPayButton, for: .normal)
         payButton.tintColor = UIColor.whiteObjectColor
         payButton.titleLabel?.font = UIFont.bodyBold
         payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
@@ -47,7 +52,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var agreementLabel: UILabel = {
         let agreementLabel = UILabel()
-        agreementLabel.text = "Совершая покупку, вы соглашаетесь с условиями"
+        agreementLabel.text = Localizable.paymentAgreementLabel
         agreementLabel.textColor = UIColor.darkObjectColor
         agreementLabel.font = UIFont.caption2
         agreementLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +61,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     private lazy var agreementButton: UIButton = {
         let agreementButton = UIButton(type: .system)
-        agreementButton.setTitle("Пользовательского соглашения", for: .normal)
+        agreementButton.setTitle(Localizable.paymentAgreementButton, for: .normal)
         agreementButton.contentHorizontalAlignment = .left
         agreementButton.tintColor = .systemBlue
         agreementButton.titleLabel?.font = UIFont.caption2
@@ -84,10 +89,10 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadData()
         setupUI()
         setupNavigationBar()
+        alertPresenter = AlertPresenter(viewController: self)
     }
     
     func updateData() {
@@ -101,21 +106,39 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
         navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func showErrorAlert() {
-        let alertController = UIAlertController(title: "Не удалось загрузить методы оплаты", message: "", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel) { _ in }
-        let retryAction = UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.loadData()
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(retryAction)
-        
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
+    func navigateToPaymentSuccessViewController(viewController: UIViewController) {
+        present(viewController, animated: true)
+    }
+    
+    func showFailedLoadingPaymentMethodsAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { _ in }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.loadData()
+            }
             
-            self.present(alertController, animated: true)
+            alertPresenter.showAlert(title: Localizable.alertLoadingCurrenciesErrorMessage, actions: [cancelAction, retryAction])
+        }
+    }
+    
+    func showFailedPaymentAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let cancelAction = alertPresenter.createAction(title: Localizable.alertCancelButton, style: .cancel) { _ in }
+            let retryAction = alertPresenter.createAction(title: Localizable.alertRepeatButton, style: .default) { [weak self] _ in
+                guard let self else { return }
+                self.presenter?.handlePayButtonTapped()
+            }
+            
+            alertPresenter.showAlert(title: Localizable.alertPayErrorMessage, actions: [cancelAction, retryAction])
+        }
+    }
+    
+    func showCurrencySelectionAlert() {
+        if let alertPresenter = self.alertPresenter {
+            let okAction = alertPresenter.createAction(title: Localizable.alertOkayButton, style: .default) { _ in }
+            
+            alertPresenter.showAlert(title: Localizable.alertSelectPaymentMethodErrorMessage, actions: [okAction])
         }
     }
     
@@ -169,7 +192,7 @@ final class PaymentViewController: UIViewController, PaymentViewControllerProtoc
     }
     
     @objc private func payButtonTapped() {
-        print("pay button tapped")
+        presenter?.handlePayButtonTapped()
     }
     
     @objc private func agreementButtonTapped() {
@@ -214,6 +237,8 @@ extension PaymentViewController: UICollectionViewDelegate {
         currentCell?.layer.borderColor = UIColor.darkObjectColor.cgColor
         
         selectedIndexPath = indexPath
+        
+        presenter?.selectedCryprocurrncy = indexPath.row
     }
 }
 
@@ -237,7 +262,7 @@ extension PaymentViewController {
         }
     }
     
-    private func showLoading() {
+    func showLoading() {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             

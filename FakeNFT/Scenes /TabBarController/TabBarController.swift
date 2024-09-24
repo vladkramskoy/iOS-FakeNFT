@@ -11,7 +11,7 @@ final class TabBarController: UITabBarController {
     )
     
     private let cartTabBarItem = UITabBarItem(
-        title: NSLocalizedString("Корзина", comment: ""),
+        title: NSLocalizedString(Localizable.tabBarСart, comment: ""),
         image: UIImage(named: "cart"),
         tag: 2
     )

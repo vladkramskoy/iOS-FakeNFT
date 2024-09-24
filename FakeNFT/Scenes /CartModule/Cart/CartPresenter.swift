@@ -16,6 +16,9 @@ protocol CartPresenterProtocol: AnyObject {
     func calculateTotalPrice() -> Float
     func removePositionFromCart(id: String)
     func handlePaymentButtonTapped()
+    func sortByPrice()
+    func sortByRating()
+    func sortByName()
 }
 
 final class CartPresenter: CartPresenterProtocol {
@@ -60,11 +63,12 @@ final class CartPresenter: CartPresenterProtocol {
                 self.cartNfts = updateData
                 view?.updateView()
                 view?.hideLoading()
+                view?.checkArrayAndShowPlaceholder()
                 
                 print("Позиция \(id) удалена")
             case .failure(_):
                 view?.hideLoading()
-                view?.showDeletionErrorAlert()
+                view?.showFailedDeleteFromCartAlert()
             }
         }
     }
@@ -75,13 +79,39 @@ final class CartPresenter: CartPresenterProtocol {
         }
     }
     
+    func getClearCartClosure() -> Void {
+        self.cartNfts = []
+        self.view?.checkArrayAndShowPlaceholder()
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.view?.tableView.reloadData()
+        }
+    }
+    
     func handlePaymentButtonTapped() {
         let paymentViewController = PaymentViewController()
         let paymentPresenter = PaymentPresenter(view: paymentViewController, servicesAssembly: self.servicesAssembly)
-        paymentViewController.title = "Выберите способ оплаты"
+        paymentViewController.title = Localizable.paymentTitle
         paymentViewController.hidesBottomBarWhenPushed = true
         paymentViewController.presenter = paymentPresenter
+        paymentViewController.presenter?.clearCartClosure = getClearCartClosure
         self.view?.navigateToPaymentViewController(viewController: paymentViewController)
+    }
+    
+    func sortByPrice() {
+        cartNfts.sort { $0.price < $1.price }
+        view?.tableView.reloadData()
+    }
+    
+    func sortByRating() {
+        cartNfts.sort { $0.rating < $1.rating }
+        view?.tableView.reloadData()
+    }
+    
+    func sortByName() {
+        cartNfts.sort { $0.name < $1.name }
+        view?.tableView.reloadData()
     }
     
     private func getCartNfts() {
@@ -92,6 +122,7 @@ final class CartPresenter: CartPresenterProtocol {
             case .success(let nftIds):
                 guard !nftIds.isEmpty else {
                     self.view?.hideLoading()
+                    self.view?.checkArrayAndShowPlaceholder()
                     return
                 }
                 
@@ -101,7 +132,7 @@ final class CartPresenter: CartPresenterProtocol {
                 print("Error in receiving NFT details:", error)
                 
                 self.view?.hideLoading()
-                self.view?.showErrorAlert()
+                self.view?.showFailedLoadingCartAlert()
             }
         }
     }
@@ -137,7 +168,7 @@ final class CartPresenter: CartPresenterProtocol {
                     remainingRequests -= 1
                     if remainingRequests == 0 {
                         self.view?.hideLoading()
-                        self.view?.showErrorAlert()
+                        self.view?.showFailedLoadingCartAlert()
                     }
                 }
             }
