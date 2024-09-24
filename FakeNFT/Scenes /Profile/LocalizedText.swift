@@ -13,6 +13,11 @@ enum LocalizedText {
         tableName: "Profile",
         comment: "Text cell in table"
     )
+    static let nft = NSLocalizedString(
+        "Profile.NFT",
+        tableName: "Profile",
+        comment: "NFT"
+    )
     static let favoriteNFT = NSLocalizedString(
         "Profile.favoriteNFT",
         tableName: "Profile",
@@ -107,5 +112,30 @@ enum LocalizedText {
         "My.NFT.error.alert.message",
         tableName: "Profile",
         comment: "Alert text"
+    )
+    static let errorAlertRemoveLikeMessage = NSLocalizedString(
+        "My.favorites.NFT.error.remove.like.alert.message",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
+    static let errorWebViewAlertMessage = NSLocalizedString(
+        "WebView.alert.message",
+        tableName: "Profile",
+        comment: "Alert text"
+    )
+    static let emptyFavoritesNFT = NSLocalizedString(
+        "My.favorites.NFT.empty.NFT",
+        tableName: "Profile",
+        comment: "Text label"
+    )
+    static let myFavoritesNFTNavbarTitle = NSLocalizedString(
+        "My.favorites.NFT.navbar.title",
+        tableName: "Profile",
+        comment: "Text title"
+    )
+    static let myFavoritesNftETH = NSLocalizedString(
+        "My.favorites.NFT.ETH",
+        tableName: "Profile",
+        comment: "Text ETH"
     )
 }

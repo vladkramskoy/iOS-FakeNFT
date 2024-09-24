@@ -61,6 +61,20 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         return view
     }()
     
+    private lazy var siteButton: UIButton = {
+        let view = UIButton()
+        view.backgroundColor = .backgroundColor
+        view.setTitleColor(.siteBlue, for: .normal)
+        view.titleLabel?.font = .caption1
+        view.addTarget(
+            self,
+            action: #selector(openSite),
+            for: .touchUpInside
+        )
+        view.isHidden = true
+        return view
+    }()
+    
     private lazy var tableView: UITableView = {
         let view = UITableView()
         view.backgroundColor = .backgroundColor
@@ -96,6 +110,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             imageProfile,
             userName,
             userDescription,
+            siteButton,
             tableView,
             activityIndicator
         ].forEach{
@@ -116,11 +131,18 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         addConstraintImageProfile()
         addConstraintUserName()
         addConstraintUserDescription()
+        addConstraintSiteButton()
         addConstraintTableView()
         
         self.showLoading()
         presenter.loadProfile()
-        updateProfile()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        hideViewElements()
+        self.showLoading()
+        presenter.loadProfile()
     }
     
     func updateProfile() {
@@ -129,12 +151,15 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             imageProfile.kf.setImage(with: url)
             userName.text = profile.name
             userDescription.text = profile.description
+            let site = URLComponents(string: profile.website)
+            siteButton.setTitle(site?.host ?? profile.website, for: .normal)
             tableView.reloadData()
             [
                 editProfileButton,
                 imageProfile,
                 userName,
                 userDescription,
+                siteButton,
                 tableView
             ].forEach{
                 $0.isHidden = false
@@ -149,6 +174,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
             imageProfile,
             userName,
             userDescription,
+            siteButton,
             tableView
         ].forEach{
             $0.isHidden = true
@@ -161,6 +187,17 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         let viewController = EditProfileViewController(profilePresenter: presenter)
         present(viewController, animated: true)
         
+    }
+    
+    @objc private func openSite() {
+        if let url = URL(string: presenter.profileData?.website ?? "") {
+            let wv = WebViewController(url: url)
+            let nc = UINavigationController(rootViewController: wv)
+            nc.modalPresentationStyle = .fullScreen
+            present(nc, animated: true)
+        } else {
+            showErrorAlert(message: LocalizedText.errorWebViewAlertMessage)
+        }
     }
     
     private func addConstraintEditProfileButton(){
@@ -238,11 +275,29 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         )
     }
     
+    private func addConstraintSiteButton(){
+        NSLayoutConstraint.activate(
+            [
+                siteButton.topAnchor.constraint(
+                    equalTo: userDescription.bottomAnchor,
+                    constant: ConstantsConstraint.topSiteButtonOffset
+                ),
+                siteButton.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: ConstantsConstraint.defaultOffset
+                ),
+                siteButton.heightAnchor.constraint(
+                    equalToConstant: ConstantsConstraint.siteButtonHeight
+                )
+            ]
+        )
+    }
+    
     private func addConstraintTableView(){
         NSLayoutConstraint.activate(
             [
                 tableView.topAnchor.constraint(
-                    equalTo: userDescription.bottomAnchor,
+                    equalTo: siteButton.bottomAnchor,
                     constant: ConstantsConstraint.topTableOffset
                 ),
                 tableView.bottomAnchor.constraint(
@@ -270,7 +325,9 @@ extension ProfileViewController {
         static let heightImage: CGFloat = 70
         static let topImageOffset: CGFloat = 20
         static let topDescriptionOffset: CGFloat = 20
-        static let topTableOffset: CGFloat = 40
+        static let topTableOffset: CGFloat = 44
+        static let topSiteButtonOffset: CGFloat = 12
+        static let siteButtonHeight: CGFloat = 20
     }
 }
 
@@ -287,6 +344,13 @@ extension ProfileViewController: UITableViewDelegate {
             let nc = UINavigationController(rootViewController: myNFTc)
             nc.modalPresentationStyle = .fullScreen
             present(nc, animated: true)
+        case 1:
+            let myFavoritesNFTc = presenter.getMyFavoritesNftController()
+            let nc = UINavigationController(rootViewController: myFavoritesNFTc)
+            nc.modalPresentationStyle = .fullScreen
+            present(nc, animated: true)
+        case 2:
+            openSite()
         default: break
         }
         tableView.deselectRow(at: indexPath, animated: true)

@@ -11,11 +11,11 @@ typealias EditProfileCompletion = (Result<ProfileData, Error>) -> Void
 
 protocol EditProfileServices {
     func sendEditProfileRequest(
-        name: String,
-        description: String,
-        website: String,
-        avatar: String,
-        likes: [String],
+        name: String?,
+        description: String?,
+        website: String?,
+        avatar: String?,
+        likes: [String]?,
         completion: @escaping EditProfileCompletion
     )
 }
@@ -30,11 +30,11 @@ final class EditProfileServicesImpl: EditProfileServices {
     }
     
     func sendEditProfileRequest(
-        name: String,
-        description: String,
-        website: String,
-        avatar: String,
-        likes: [String],
+        name: String?,
+        description: String?,
+        website: String?,
+        avatar: String?,
+        likes: [String]?,
         completion: @escaping EditProfileCompletion
     ) {
         let dto = EditProfileDtoObject(
@@ -54,5 +54,5 @@ final class EditProfileServicesImpl: EditProfileServices {
                 completion(.failure(error))
             }
         }
-    }
+    }    
 }

@@ -15,6 +15,7 @@ protocol ProfilePresenterProtocol {
     func loadProfile()
     func editProfile(profile: ProfileData)
     func getMyNftController() -> MyNFTViewController
+    func getMyFavoritesNftController() -> MyFavoritesNFTViewController
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
@@ -49,6 +50,17 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         let myNFT = MyNFTViewController(myNFTPresenter: myNFTPresenter)
         myNFTPresenter.myNFTViewController = myNFT
         return myNFT
+    }
+    
+    func getMyFavoritesNftController() -> MyFavoritesNFTViewController {
+        let myFavoritesNFTPresenter = MyFavoritesNFTPresenter(
+            nftService: nftService,
+            editProfileServices: editProfileServices,
+            myFavoritesNFTIDArray: profileData?.likes ?? []
+        )
+        let myFavoritesNFT = MyFavoritesNFTViewController(myFavoritesNFTPresenter: myFavoritesNFTPresenter)
+        myFavoritesNFTPresenter.myFavoritesNFTViewController = myFavoritesNFT
+        return myFavoritesNFT
     }
     
     func getTextCell(number: Int) -> String {

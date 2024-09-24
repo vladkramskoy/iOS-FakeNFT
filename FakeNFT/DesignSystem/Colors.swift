@@ -43,6 +43,8 @@ extension UIColor {
     static let textOnPrimary = UIColor.white
     static let textOnSecondary = UIColor.black
     static let yellowStar = UIColor(hexString: "#FEEF0D")
+    static let heartRed = UIColor(hexString: "#F56B6C")
+    static let siteBlue = UIColor(hexString: "#0A84FF")
     
     private static let yaBlackLight = UIColor(hexString: "1A1B22")
     private static let yaBlackDark = UIColor.white

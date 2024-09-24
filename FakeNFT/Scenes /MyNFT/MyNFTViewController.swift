@@ -10,7 +10,7 @@ import UIKit
 protocol MyNFTViewControllerProtocol: AnyObject, LoadingView {
     func showMyNFT(isEmpty: Bool)
     func reloadTableMyNFT()
-    func showErrorAlert(countNftError: Int)
+    func showErrorAlert(message: String)
 }
 
 final class MyNFTViewController: UIViewController, MyNFTViewControllerProtocol {
@@ -128,20 +128,6 @@ final class MyNFTViewController: UIViewController, MyNFTViewControllerProtocol {
         tableMyNFT.reloadData()
     }
     
-    func showErrorAlert(countNftError: Int) {
-        let alert = UIAlertController(
-            title: nil,
-            message: "\(LocalizedText.errorAlertMessage) \(countNftError) NFT",
-            preferredStyle: .actionSheet)
-        
-        let cancelAction = UIAlertAction(
-            title: LocalizedText.okButton,
-            style: .cancel
-        )
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
-    
     // MARK: - Private Methods
     private func addConstraintTableMyNFT() {
         NSLayoutConstraint.activate(
@@ -181,7 +167,7 @@ final class MyNFTViewController: UIViewController, MyNFTViewControllerProtocol {
     }
     
     @objc private func clickSortButton() {
-        present(getAlert(), animated: true)
+        present(getSortNFTAlert(), animated: true)
     }
     
 }
@@ -228,7 +214,7 @@ extension MyNFTViewController: UITableViewDataSource {
 
 //MARK: - UIAlertController
 extension MyNFTViewController {
-    private func getAlert() -> UIAlertController {
+    private func getSortNFTAlert() -> UIAlertController {
         let alert = UIAlertController(
             title: nil,
             message: LocalizedText.sortAlertTitle,
