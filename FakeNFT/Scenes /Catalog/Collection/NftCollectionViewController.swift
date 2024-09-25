@@ -66,11 +66,13 @@ final class NftCollectionViewController: UIViewController {
         setupViews()
         setupConstraints()
         presenter.viewDidLoad()
+        tabBarController?.tabBar.isHidden = true
         view.backgroundColor = .white
     }
     
     //MARK: - Private methods
     @objc private func backToNftCatalogViewController() {
+        tabBarController?.tabBar.isHidden = false
         navigationController?.popViewController(animated: true)
     }
 }
@@ -100,6 +102,7 @@ extension NftCollectionViewController: UICollectionViewDataSource {
         
         let headerView: NftHeaderCollectionView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, indexPath: indexPath)
         headerView.configure(collectionModel)
+        headerView.delegate = self
         return headerView
     }
 }
@@ -158,6 +161,13 @@ extension NftCollectionViewController: NftCellDelegate {
     }
 }
 
+//MARK: - NftHeaderCollectionViewDelegate
+extension NftCollectionViewController: NftHeaderCollectionViewDelegate {
+    func transitionToAuthorPage() {
+        let authorPageViewController = AuthorPageViewController()
+        navigationController?.pushViewController(authorPageViewController, animated: true)
+    }
+}
 
 //MARK: - AutoLayout
 extension NftCollectionViewController {

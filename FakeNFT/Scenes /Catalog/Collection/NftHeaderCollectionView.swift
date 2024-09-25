@@ -1,6 +1,10 @@
 
 import UIKit
 
+protocol NftHeaderCollectionViewDelegate: AnyObject {
+    func transitionToAuthorPage()
+}
+
 //MARK: - NftHeaderCollectionView
 final class NftHeaderCollectionView: UICollectionReusableView, ReuseIdentifying {
     
@@ -8,6 +12,9 @@ final class NftHeaderCollectionView: UICollectionReusableView, ReuseIdentifying 
     private enum UIConstants {
         static let coverImageViewCornerRadius: CGFloat = 12
     }
+    
+    //MARK: - Public Properties
+    weak var delegate: NftHeaderCollectionViewDelegate?
     
     //MARK: - UIModels
     private lazy var placeholderImageView: UIImageView = {
@@ -77,7 +84,7 @@ final class NftHeaderCollectionView: UICollectionReusableView, ReuseIdentifying 
     
     //MARK: - Private methods
     @objc private func didTapAuthorButton() {
-        //TODO: Переход на страницу автора
+        delegate?.transitionToAuthorPage()
     }
 }
 

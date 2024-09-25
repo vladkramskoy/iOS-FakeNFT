@@ -1,4 +1,3 @@
-
 import Foundation
 
 //MARK: - Protocol
@@ -13,7 +12,7 @@ enum NftCatalogState {
 }
 
 //MARK: - SortOption
-enum SortOption {
+enum SortOption: String {
     case byName
     case byNftCount
 }
@@ -30,6 +29,7 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
     }
     
     private var nftCollections: [NftCollection] = []
+    private let sortOptionKey = "SortOptionKey"
     
     //MARK: - Public Properties
     weak var view: NftCatalogView?
@@ -39,22 +39,24 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
         self.service = service
     }
     
-    //MARK: - Public Functions
+    //MARK: - Public Methods
     func viewDidLoad() {
         state = .loading
+        loadSavedSortOption()
     }
     
     func sortCollections(by option: SortOption) {
-            switch option {
-            case .byName:
-                nftCollections.sort { $0.name < $1.name }
-            case .byNftCount:
-                nftCollections.sort { $0.nfts.count < $1.nfts.count }
-            }
-            updateViewWithSortedCollections()
+        saveSortOption(option)
+        switch option {
+        case .byName:
+            nftCollections.sort { $0.name < $1.name }
+        case .byNftCount:
+            nftCollections.sort { $0.nfts.count < $1.nfts.count }
         }
+        updateViewWithSortedCollections()
+    }
     
-    //MARK: - Private Functions
+    //MARK: - Private Methods
     private func stateDidChanged() {
         switch state {
         case .initial:
@@ -65,7 +67,7 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
         case .data(let nftCollections):
             view?.hideLoading()
             self.nftCollections = nftCollections
-            updateViewWithSortedCollections()
+            sortCollections(by: loadSortOption())
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
@@ -100,7 +102,25 @@ final class NftCatalogPresenterImpl: NftCatalogPresenter {
     }
     
     private func updateViewWithSortedCollections() {
-            let cellModels = nftCollections.map { NftCatalogCellModel(name: $0.name, cover: $0.cover, id: $0.id, nfts: $0.nfts)}
-            view?.displayCells(cellModels)
+        let cellModels = nftCollections.map { NftCatalogCellModel(name: $0.name, cover: $0.cover, id: $0.id, nfts: $0.nfts)}
+        view?.displayCells(cellModels)
+    }
+    
+    // MARK: - SortOption Persistence
+    private func saveSortOption(_ option: SortOption) {
+        UserDefaults.standard.set(option.rawValue, forKey: sortOptionKey)
+    }
+    
+    private func loadSortOption() -> SortOption {
+        if let savedOption = UserDefaults.standard.string(forKey: sortOptionKey),
+           let sortOption = SortOption(rawValue: savedOption) {
+            return sortOption
         }
+        return .byName
+    }
+    
+    private func loadSavedSortOption() {
+        let savedOption = loadSortOption()
+        sortCollections(by: savedOption)
+    }
 }
