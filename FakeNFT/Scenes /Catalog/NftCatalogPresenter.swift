@@ -11,12 +11,6 @@ enum NftCatalogState {
     case initial, loading, failed(Error), data([NftCollection])
 }
 
-//MARK: - SortOption
-enum SortOption: String {
-    case byName
-    case byNftCount
-}
-
 //MARK: - NftCatalogPresenterImpl
 final class NftCatalogPresenterImpl: NftCatalogPresenter {
     

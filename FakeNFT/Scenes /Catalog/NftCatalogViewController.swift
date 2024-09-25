@@ -11,8 +11,8 @@ final class NftCatalogViewController: UIViewController {
     //MARK: - Constants
     private enum Constants {
         static let alertMessage = NSLocalizedString("Catalog.sort", comment: "")
-        static let alertAction1 = NSLocalizedString("Catalog.sortByName", comment: "")
-        static let alertAction2 = NSLocalizedString("Catalog.sortByNftCount", comment: "")
+        static let sortByNameTitle = NSLocalizedString("Catalog.sortByName", comment: "")
+        static let sortByNftCountTitle = NSLocalizedString("Catalog.sortByNftCount", comment: "")
         static let alertCancel = NSLocalizedString("Catalog.cancel", comment: "")
     }
     
@@ -71,11 +71,11 @@ final class NftCatalogViewController: UIViewController {
             message: Constants.alertMessage,
             preferredStyle: .actionSheet)
         
-        let sortByNameAction = UIAlertAction(title: Constants.alertAction1, style: .default) { _ in
+        let sortByNameAction = UIAlertAction(title: Constants.sortByNameTitle, style: .default) { _ in
             self.presenter.sortCollections(by: .byName)
         }
         
-        let sortByNftCountAction = UIAlertAction(title: Constants.alertAction2, style: .default) { _ in
+        let sortByNftCountAction = UIAlertAction(title: Constants.sortByNftCountTitle, style: .default) { _ in
             self.presenter.sortCollections(by: .byNftCount)
         }
         

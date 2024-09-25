@@ -1,13 +1,5 @@
 import Foundation
 
-struct EditOrderRequest: NetworkRequest {
-    var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
-    }
-    var httpMethod: HttpMethod = .put
-    var dto: Dto?
-}
-
 struct EditOrderDtoObject: Dto {
     let nfts: [String]?
     let id: String?
