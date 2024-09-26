@@ -36,6 +36,9 @@ extension UIColor {
     // Background Colors
     static let background = UIColor.white
     static let backgroundEditProfileImage = UIColor(red: 26 / 255, green: 27 / 255, blue: 34 / 255, alpha: 0.6)
+
+    // Object Colors
+    static let blackLight = UIColor(hexString: "1A1B22")
     
     // Text Colors
     static let textPrimary = UIColor.black
@@ -45,6 +48,10 @@ extension UIColor {
     static let yellowStar = UIColor(hexString: "#FEEF0D")
     static let heartRed = UIColor(hexString: "#F56B6C")
     static let siteBlue = UIColor(hexString: "#0A84FF")
+    static let textGreen = UIColor(hexString: "#1C9F00")
+    static let textRed = UIColor(hexString: "#F56B6C")
+    
+    // Dark Mode
     
     private static let yaBlackLight = UIColor(hexString: "1A1B22")
     private static let yaBlackDark = UIColor.white
@@ -73,5 +80,23 @@ extension UIColor {
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
+    }
+    
+    static let darkObjectColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
+    static let whiteObjectColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaBlackLight
+        : .yaBlackDark
+    }
+    
+    static let paymentAreaColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaLightGrayDark
+        : .yaLightGrayLight
     }
 }
