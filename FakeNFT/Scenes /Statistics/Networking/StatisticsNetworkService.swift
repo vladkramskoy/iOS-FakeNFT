@@ -3,39 +3,46 @@ import Foundation
 final class StatisticsNetworkService {
     
     static let shared = StatisticsNetworkService()
-    
     private init() {}
     
     func fetchUsers(completion: @escaping (Result<[User], Error>) -> Void) {
+        performRequest(
+            endpoint: "/api/v1/users",
+            completion: completion
+        )
+    }
+    
+    func fetchNFT(completion: @escaping (Result<[NFTModel], Error>) -> Void) {
+        performRequest(
+            endpoint: "/api/v1/nft",
+            completion: completion
+        )
+    }
+    
+    private func performRequest<T: Decodable>(
+        endpoint: String,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
         assert(Thread.isMainThread, "Must be called on the main thread")
         
-        guard let request = usersRequest() else {
-            assertionFailure("Invalid users request")
+        guard let request = URLRequest.makeHTTPRequest(
+            path: endpoint,
+            httpMethod: "GET",
+            baseURL: URL(string: RequestConstants.baseURL)
+        ) else {
+            assertionFailure("Invalid request for endpoint: \(endpoint)")
             return
         }
         
-        URLSession.shared.objectTask(for: request) { (response: Result<[User], Error>) in
+        URLSession.shared.objectTask(for: request) { (response: Result<T, Error>) in
             switch response {
             case .success(let body):
                 completion(.success(body))
             case .failure(let error):
+                print("[NetworkService]: \(error.localizedDescription) Request: \(request)")
                 completion(.failure(error))
-                print("[StatisticsService]: \(error.localizedDescription) Request: \(request)")
             }
         }
-    }
-    
-    private func usersRequest() -> URLRequest? {
-        var request = URLRequest.makeHTTPRequest(
-            path: "/api/v1/users",
-            httpMethod: "GET",
-            baseURL: URL(string: RequestConstants.baseURL)
-        )
-        
-        request?.setValue("application/json", forHTTPHeaderField: "Accept")
-        request?.setValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
-        
-        return request
     }
 }
 
@@ -70,7 +77,7 @@ extension URLSession {
                     fulfillCompletion(.failure(NetworkError.httpStatusCode(statusCode)))
                 }
             } else if let error = error {
-                print("URLSession error: \(error)")
+                print("URLSession error: \(error.localizedDescription)")
                 fulfillCompletion(.failure(NetworkError.urlRequestError(error)))
             } else {
                 print("Unknown error")
@@ -96,6 +103,8 @@ extension URLRequest {
         
         var request = URLRequest(url: requestURL)
         request.httpMethod = httpMethod
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
         
         return request
     }
