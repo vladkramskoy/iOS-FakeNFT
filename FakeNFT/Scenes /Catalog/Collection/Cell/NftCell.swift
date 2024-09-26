@@ -1,6 +1,12 @@
 
 import UIKit
 
+//MARK: - NftCellDelegate
+protocol NftCellDelegate: AnyObject {
+    func nftCellDidUpdateLikeStatus(nftId: String)
+    func nftCellDidUpdateOrderStatus(nftId: String)
+}
+
 //MARK: - NftCell
 final class NftCell: UICollectionViewCell, ReuseIdentifying {
     
@@ -8,6 +14,12 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     private enum UIConstants {
         static let nftImageViewCornerRadius: CGFloat = 12
     }
+    
+    //MARK: - Public Properties
+    weak var delegate: NftCellDelegate?
+    
+    //MARK: - Private Properties
+    private var nftId: String?
     
     //MARK: - UIModels
     private lazy var placeholderImageView: UIImageView = {
@@ -25,9 +37,10 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
         return imageView
     }()
     
-    private let favoriteButton: UIButton = {
+    private lazy var favoriteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(resource: .unFavoriteIcon), for: .normal)
+        button.addTarget(self, action: #selector(changeFavorite), for: .touchUpInside)
         return button
     }()
     
@@ -56,6 +69,7 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     private lazy var cartButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(resource: .cartIcon), for: .normal)
+        button.addTarget(self, action: #selector(changeOrder), for: .touchUpInside)
         return button
     }()
     
@@ -71,11 +85,18 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
     }
     
     //MARK: - Public Properties
-    func configure(cellModel: NftCellModel) {
+    func configure(_ cellModel: NftCellModel, _ favoritesNFTId: [String], _ order: [String]) {
         nftName.text = cellModel.name
         priceLabel.text = "\(cellModel.price) ETH"
         nftImageView.kf.setImage(with: cellModel.images.first)
         setupRatingStars(cellModel.rating)
+        nftId = cellModel.id
+        let isLiked = favoritesNFTId.contains(cellModel.id)
+        let favoriteImage = isLiked ? UIImage(resource: .favoriteIcon) : UIImage(resource: .unFavoriteIcon)
+        favoriteButton.setImage(favoriteImage, for: .normal)
+        let isOrdered = order.contains(cellModel.id)
+        let orderImage = isOrdered ? UIImage(resource: .deleteCartIcon) : UIImage(resource: .cartIcon)
+        cartButton.setImage(orderImage, for: .normal)
     }
     
     //MARK: - Private Properties
@@ -93,6 +114,16 @@ final class NftCell: UICollectionViewCell, ReuseIdentifying {
             ratingStackView.addArrangedSubview(ratingImageView)
         }
     }
+    
+    @objc private func changeFavorite() {
+        guard let nftId = nftId else { return }
+        delegate?.nftCellDidUpdateLikeStatus(nftId: nftId)
+    }
+    
+    @objc private func changeOrder() {
+        guard let nftId = nftId else { return }
+        delegate?.nftCellDidUpdateOrderStatus(nftId: nftId)
+    }
 }
 
 //MARK: - AutoLayout
@@ -100,6 +131,7 @@ extension NftCell {
     private func setupViews() {
         [placeholderImageView,
          nftImageView,
+         favoriteButton,
          ratingStackView,
          nftName,
          priceLabel,
@@ -109,7 +141,6 @@ extension NftCell {
         }
         
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
-        nftImageView.addSubview(favoriteButton)
     }
     
     private func setConstraints() {

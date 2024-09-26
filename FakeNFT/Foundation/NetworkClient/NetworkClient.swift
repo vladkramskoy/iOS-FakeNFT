@@ -122,7 +122,19 @@ struct DefaultNetworkClient: NetworkClient {
         if let dtoDictionary = request.dto?.asDictionary() {
             var urlComponents = URLComponents()
             let queryItems = dtoDictionary.map { field in
-                URLQueryItem(
+                if field.key.contains("likes") {
+                    return URLQueryItem(
+                        name: "likes",
+                        value: field.value
+                    )
+                }
+                if field.key.contains("nfts") {
+                    return URLQueryItem(
+                        name: "nfts",
+                        value: field.value
+                    )
+                }
+                return URLQueryItem(
                     name: field.key,
                     value: field.value
                     )
@@ -133,7 +145,6 @@ struct DefaultNetworkClient: NetworkClient {
         }
 
         urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-
         return urlRequest
     }
 

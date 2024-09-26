@@ -61,7 +61,6 @@ final class NftServiceImpl: NftService {
         if let nftCollections = collectionsStorage.getAllNftCollections(), !nftCollections.isEmpty {
             completion(.success(nftCollections))
         } else {
-            
             let request = NFTCollectionsRequest()
             networkClient.send(request: request, type: [NftCollection].self) { [weak collectionsStorage] result in
                 switch result {

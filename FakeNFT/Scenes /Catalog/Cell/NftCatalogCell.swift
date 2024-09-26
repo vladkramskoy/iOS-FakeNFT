@@ -19,6 +19,7 @@ final class NftCatalogCell: UITableViewCell, ReuseIdentifying {
     
     private lazy var nftCollectionImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = UIConstants.nftCollectionImageViewCornerRadius
         imageView.clipsToBounds = true
         return imageView
@@ -62,12 +63,12 @@ extension NftCatalogCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            placeholderImageView.heightAnchor.constraint(equalToConstant: 140),
+            placeholderImageView.heightAnchor.constraint(equalToConstant: 150),
             placeholderImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             placeholderImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             placeholderImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            nftCollectionImageView.heightAnchor.constraint(equalToConstant: 140),
+            nftCollectionImageView.heightAnchor.constraint(equalToConstant: 150),
             nftCollectionImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftCollectionImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             nftCollectionImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
