@@ -1,10 +1,3 @@
-//
-//  ProfileStorage.swift
-//  FakeNFT
-//
-//  Created by gimon on 11.09.2024.
-//
-
 import Foundation
 
 protocol ProfileStorage: AnyObject {
@@ -29,3 +22,4 @@ final class ProfileStorageImpl: ProfileStorage {
         }
     }
 }
+

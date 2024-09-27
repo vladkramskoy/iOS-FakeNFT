@@ -1,19 +1,4 @@
-//
-//  EditProfileRequest.swift
-//  FakeNFT
-//
-//  Created by gimon on 16.09.2024.
-//
-
 import Foundation
-
-struct EditProfileRequest: NetworkRequest {
-    var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1")
-    }
-    var httpMethod: HttpMethod = .put
-    var dto: Dto?
-}
 
 struct EditProfileDtoObject: Dto {
     let name: String?

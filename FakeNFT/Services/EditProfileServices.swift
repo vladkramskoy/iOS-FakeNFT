@@ -1,10 +1,3 @@
-//
-//  EditProfileServices.swift
-//  FakeNFT
-//
-//  Created by gimon on 16.09.2024.
-//
-
 import Foundation
 
 typealias EditProfileCompletion = (Result<ProfileData, Error>) -> Void
@@ -45,7 +38,7 @@ final class EditProfileServicesImpl: EditProfileServices {
             likes: likes
         )
         let request = EditProfileRequest(dto: dto)
-        networkClient.send(request: request, type: ProfileData.self) {[weak self] result in
+        networkClient.send(request: request, type: ProfileData.self) { [weak self] result in
             switch result {
             case .success(let profile):
                 self?.profileStorage.saveProfile(profile)
@@ -54,5 +47,6 @@ final class EditProfileServicesImpl: EditProfileServices {
                 completion(.failure(error))
             }
         }
-    }    
+    }
+
 }

@@ -61,7 +61,6 @@ struct DefaultNetworkClient: NetworkClient {
             }
         }
         guard let urlRequest = create(request: request) else { return nil }
-        
         let task = session.dataTask(with: urlRequest) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
                 onResponse(.failure(NetworkClientError.urlSessionError))
@@ -129,6 +128,12 @@ struct DefaultNetworkClient: NetworkClient {
                         value: field.value
                     )
                 }
+                if field.key.contains("nfts") {
+                    return URLQueryItem(
+                        name: "nfts",
+                        value: field.value
+                    )
+                }
                 return URLQueryItem(
                     name: field.key,
                     value: field.value
@@ -140,7 +145,6 @@ struct DefaultNetworkClient: NetworkClient {
         }
         
         urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
         return urlRequest
     }
     

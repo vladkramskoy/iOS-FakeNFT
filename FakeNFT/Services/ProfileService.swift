@@ -1,10 +1,3 @@
-//
-//  ProfileService.swift
-//  FakeNFT
-//
-//  Created by gimon on 10.09.2024.
-//
-
 import Foundation
 
 typealias ProfileCompletion = (Result<ProfileData, Error>) -> Void
@@ -31,10 +24,10 @@ final class ProfileServiceImpl: ProfileService {
         }
         
         let request = ProfileRequest()
-        networkClient.send(request: request, type: ProfileData.self) {[weak self] result in
+        networkClient.send(request: request, type: ProfileData.self) { [weak profileStorage] result in
             switch result {
             case .success(let profile):
-                self?.profileStorage.saveProfile(profile)
+                profileStorage?.saveProfile(profile)
                 completion(.success(profile))
             case .failure(let error):
                 completion(.failure(error))

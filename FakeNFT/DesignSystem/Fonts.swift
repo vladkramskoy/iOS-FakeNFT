@@ -17,4 +17,5 @@ extension UIFont {
     // Caption Fonts
     static var caption1 = UIFont.systemFont(ofSize: 15, weight: .regular)
     static var caption2 = UIFont.systemFont(ofSize: 13, weight: .regular)
+    
 }

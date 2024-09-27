@@ -12,7 +12,7 @@ final class TabBarController: UITabBarController {
 
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
-        image: UIImage(systemName: "square.stack.3d.up.fill"),
+        image: UIImage(resource: .catalogTabBarItem),
         tag: 1
     )
 
@@ -21,7 +21,7 @@ final class TabBarController: UITabBarController {
         image: UIImage(named: "cart"),
         tag: 2
     )
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,13 +36,18 @@ final class TabBarController: UITabBarController {
         let profileController = ProfileViewController(presenter: profilePresenter)
         profileController.tabBarItem = profileTabBarItem
         
+        let assembly = NftCatalogAssembly(servicesAssembler: servicesAssembly)
+        let nftCatalogViewController = UINavigationController(rootViewController: assembly.build())
+
+        nftCatalogViewController.tabBarItem = catalogTabBarItem
+
         let cartController = CartViewController()
         let cartPresenter = CartPresenter(view: cartController, servicesAssembly: servicesAssembly)
         cartController.presenter = cartPresenter
         let cartNavigationController = UINavigationController(rootViewController: cartController)
         cartController.tabBarItem = cartTabBarItem
         
-        viewControllers = [profileController, catalogController, cartNavigationController]
+        viewControllers = [profileController, nftCatalogViewController, cartNavigationController]
         tabBar.unselectedItemTintColor = UIColor(named: "darkObjectColor")
         
         view.backgroundColor = .systemBackground
