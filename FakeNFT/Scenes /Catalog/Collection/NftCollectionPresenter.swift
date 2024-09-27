@@ -20,7 +20,7 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
     private let service: NftService
     private let editProfileServices: EditProfileServices
     private let profileService: ProfileService
-    private let orderService: OrderService
+    private let orderServices: OrderServices
     private let editOrderService: EditOrderService
     private var state = NftCollectionState.initial {
         didSet {
@@ -40,14 +40,14 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
     init(service: NftService,
          editProfileServices: EditProfileServices,
          profileService: ProfileService,
-         orderService: OrderService,
+         orderService: OrderServices,
          editOrderService: EditOrderService,
          nftCollectionId: String) {
         self.service = service
         self.editProfileServices = editProfileServices
         self.profileService = profileService
         self.nftCollectionId = nftCollectionId
-        self.orderService = orderService
+        self.orderServices = orderService
         self.editOrderService = editOrderService
     }
     
@@ -138,7 +138,7 @@ final class NftCollectionPresenterImpl: NftCollectionPresenter {
     }
     
     private func loadOrder() {
-        orderService.loadOrder { [weak self] result in
+        orderServices.loadOrder { [weak self] result in
             switch result {
             case .success(let order):
                 self?.orderNFTId = order.nfts

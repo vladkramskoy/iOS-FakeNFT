@@ -50,7 +50,7 @@
 		D14CAE8D2CA1B83400B9BE32 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE8C2CA1B82D00B9BE32 /* ProfileService.swift */; };
 		D14CAE8F2CA1C2B900B9BE32 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE8E2CA1C2B600B9BE32 /* Order.swift */; };
 		D14CAE912CA1C31000B9BE32 /* OrderStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE902CA1C30C00B9BE32 /* OrderStorage.swift */; };
-		D14CAE932CA1C3A300B9BE32 /* OrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE922CA1C39E00B9BE32 /* OrderService.swift */; };
+		D14CAE932CA1C3A300B9BE32 /* OrderServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE922CA1C39E00B9BE32 /* OrderServices.swift */; };
 		D14CAE972CA1CCF000B9BE32 /* EditOrderRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE962CA1CCD200B9BE32 /* EditOrderRequest.swift */; };
 		D14CAE992CA1CE7100B9BE32 /* EditOrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14CAE982CA1CE6B00B9BE32 /* EditOrderService.swift */; };
 		D17FB9312CA4763600899AE2 /* AuthorPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17FB9302CA4762E00899AE2 /* AuthorPageViewController.swift */; };
@@ -138,7 +138,7 @@
 		D14CAE8C2CA1B82D00B9BE32 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		D14CAE8E2CA1C2B600B9BE32 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		D14CAE902CA1C30C00B9BE32 /* OrderStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderStorage.swift; sourceTree = "<group>"; };
-		D14CAE922CA1C39E00B9BE32 /* OrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderService.swift; sourceTree = "<group>"; };
+		D14CAE922CA1C39E00B9BE32 /* OrderServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderServices.swift; sourceTree = "<group>"; };
 		D14CAE962CA1CCD200B9BE32 /* EditOrderRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditOrderRequest.swift; sourceTree = "<group>"; };
 		D14CAE982CA1CE6B00B9BE32 /* EditOrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditOrderService.swift; sourceTree = "<group>"; };
 		D17FB9302CA4762E00899AE2 /* AuthorPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorPageViewController.swift; sourceTree = "<group>"; };
@@ -325,7 +325,7 @@
 				0C79EE6B2A76DE2E00EE90EA /* ServicesAssemly.swift */,
 				558E39E62C68CE0900FB86AC /* NftService.swift */,
 				D14CAE8C2CA1B82D00B9BE32 /* ProfileService.swift */,
-				D14CAE922CA1C39E00B9BE32 /* OrderService.swift */,
+				D14CAE922CA1C39E00B9BE32 /* OrderServices.swift */,
 				0CFCB73F2A78002A0009A829 /* ExamplePutService.swift */,
 			);
 			path = Services;
@@ -668,7 +668,7 @@
 				D1F0A6552C90B2DD00CA181E /* NftCatalogCellModel.swift in Sources */,
 				D1F0A6692C9A0E5500CA181E /* NftHeaderCollectionView.swift in Sources */,
 				3F6806D129CBBE6B00B4F915 /* NetworkClient.swift in Sources */,
-				D14CAE932CA1C3A300B9BE32 /* OrderService.swift in Sources */,
+				D14CAE932CA1C3A300B9BE32 /* OrderServices.swift in Sources */,
 				D14CAE992CA1CE7100B9BE32 /* EditOrderService.swift in Sources */,
 				0CFCB7442A7802440009A829 /* NftDetailInput.swift in Sources */,
 				0C79EE632A76DD1900EE90EA /* RequestConstants.swift in Sources */,

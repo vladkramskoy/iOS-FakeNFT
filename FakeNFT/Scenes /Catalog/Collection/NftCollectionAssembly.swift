@@ -13,7 +13,7 @@ public final class NftCollectionAssembly {
             service: servicesAssembler.nftService,
             editProfileServices: servicesAssembler.editProfileServices,
             profileService: servicesAssembler.profileService,
-            orderService: servicesAssembler.orderService,
+            orderService: servicesAssembler.orderServices,
             editOrderService: servicesAssembler.editOrderServices,
             nftCollectionId: id)
         

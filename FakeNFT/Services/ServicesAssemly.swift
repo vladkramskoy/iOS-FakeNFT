@@ -42,7 +42,7 @@ final class ServicesAssembly {
         )
     }
     
-    var orderService: OrderService {
+    var orderServices: OrderServices {
         OrderServiceImpl(
             networkClient: networkClient,
             orderStorage: orderStorage

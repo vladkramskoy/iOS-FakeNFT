@@ -2,11 +2,11 @@ import Foundation
 
 typealias OrderCompletion = (Result<Order, Error>) -> Void
 
-protocol OrderService {
+protocol OrderServices {
     func loadOrder(completion: @escaping OrderCompletion)
 }
 
-final class OrderServiceImpl: OrderService {
+final class OrderServiceImpl: OrderServices {
     private let networkClient: NetworkClient
     private let orderStorage: OrderStorage
     
