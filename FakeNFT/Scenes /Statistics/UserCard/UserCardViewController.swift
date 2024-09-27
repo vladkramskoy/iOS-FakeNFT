@@ -153,7 +153,7 @@ final class UserCardViewController: UIViewController {
     
     @objc
     private func didTapCollectionButton() {
-        let viewController = UsersCollectionViewController()
+        let viewController = UsersCollectionViewController(userNFTs: userNFTs)
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true)

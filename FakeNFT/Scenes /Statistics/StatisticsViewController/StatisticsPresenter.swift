@@ -10,21 +10,14 @@ protocol StatisticsPresenterProtocol: AnyObject {
 
 final class StatisticsPresenter: StatisticsPresenterProtocol {
     
-    private enum StatisticsState {
-        case notStarted
-        case loadingData
-        case errorOccurred
-        case dataLoaded
-    }
-    
-    enum SortOption {
+    enum SortOption: String {
         case name
         case rating
     }
     
     private let statisticsService = StatisticsNetworkService.shared
     private var users: [User] = []
-    private var state = StatisticsState.notStarted {
+    private var state = LoadingState.notStarted {
         didSet {
             handleStateChange()
         }
@@ -32,6 +25,7 @@ final class StatisticsPresenter: StatisticsPresenterProtocol {
     
     weak var view: StatisticsView?
     private let servicesAssembly: ServicesAssembly
+    private let sortKey = "selectedSortOption"
     
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
@@ -52,7 +46,11 @@ final class StatisticsPresenter: StatisticsPresenterProtocol {
             switch response {
             case .success(let body):
                 self.users = body
-                self.state = .dataLoaded
+                if let savedSortOption = self.loadSortOption() {
+                    self.sortUsers(by: savedSortOption)
+                } else {
+                    self.state = .dataLoaded
+                }
             case .failure:
                 self.state = .errorOccurred
             }
@@ -64,6 +62,7 @@ final class StatisticsPresenter: StatisticsPresenterProtocol {
     }
     
     func sortUsers(by option: SortOption) {
+        saveSortOption(option)
         switch option {
         case .name:
             users.sort { $0.name < $1.name }
@@ -73,20 +72,29 @@ final class StatisticsPresenter: StatisticsPresenterProtocol {
         state = .dataLoaded
     }
     
+    private func saveSortOption(_ option: SortOption) {
+        UserDefaults.standard.set(option.rawValue, forKey: sortKey)
+    }
+    
+    private func loadSortOption() -> SortOption? {
+        guard let sortOptionRawValue = UserDefaults.standard.string(forKey: sortKey),
+              let sortOption = SortOption(rawValue: sortOptionRawValue) else {
+            return nil
+        }
+        return sortOption
+    }
+    
     private func handleStateChange() {
         view?.hideLoadingIndicator()
         
         switch state {
         case .notStarted:
-            assertionFailure("Can't move to initial state")
-            
+            assertionFailure("Can't move to notStarted state")
         case .loadingData:
             view?.showLoadingIndicator()
             fetchUsers()
-            
         case .dataLoaded:
             view?.updateTableView()
-            
         case .errorOccurred:
             view?.showErrorAlert()
         }

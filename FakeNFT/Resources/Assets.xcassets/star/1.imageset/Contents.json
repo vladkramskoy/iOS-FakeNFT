@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Vector.png",
+      "filename" : "Property 1=1.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "sort@2x.png",
+      "filename" : "stars1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Sort@3x.png",
+      "filename" : "stars1@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
