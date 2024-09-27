@@ -6,6 +6,12 @@
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
 
+//Catalog
+"Catalog.sort" = "Сортировка";
+"Catalog.sortByName" = "По названию";
+"Catalog.sortByNftCount" = "По количеству NFT";
+"Catalog.cancel" = "Закрыть";
+
 // Cart
 
 "TabBar.cart" = "Корзина";
