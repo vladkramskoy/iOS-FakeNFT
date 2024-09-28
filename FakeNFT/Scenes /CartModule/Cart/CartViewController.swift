@@ -103,10 +103,14 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData()
         setupUI()
         setupNavigationBar()
         alertPresenter = AlertPresenter(viewController: self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadData()
     }
 
     func updateView() {
