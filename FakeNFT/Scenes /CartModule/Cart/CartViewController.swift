@@ -110,6 +110,7 @@ final class CartViewController: UIViewController, CartViewControllerProtocol {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        presenter?.cartNfts = []
         loadData()
     }
 

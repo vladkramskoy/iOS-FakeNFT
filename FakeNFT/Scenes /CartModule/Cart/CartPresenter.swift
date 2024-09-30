@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CartPresenterProtocol: AnyObject {
-    var cartNfts: [CartNft] { get }
+    var cartNfts: [CartNft] { get  set }
     var servicesAssembly: ServicesAssembly { get }
     
     func loadData()
