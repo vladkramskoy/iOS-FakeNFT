@@ -36,6 +36,9 @@ extension UIColor {
     // Background Colors
     static let background = UIColor.white
     static let backgroundEditProfileImage = UIColor(red: 26 / 255, green: 27 / 255, blue: 34 / 255, alpha: 0.6)
+    
+    static let greyUniversal = UIColor(red: 98/255, green: 92/255, blue: 92/255, alpha: 1.0)
+    static let lightGray = UIColor(red: 247/255, green: 247/255, blue: 248/255, alpha: 1.0)
 
     // Object Colors
     static let blackLight = UIColor(hexString: "1A1B22")

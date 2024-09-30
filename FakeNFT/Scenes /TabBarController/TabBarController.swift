@@ -22,6 +22,12 @@ final class TabBarController: UITabBarController {
         tag: 2
     )
     
+    private let statisticsTabBarItem = UITabBarItem(
+        title: NSLocalizedString("Tab.statistics", comment: ""),
+        image: UIImage(systemName: "flag.2.crossed.fill"),
+        tag: 3
+    )
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,10 +52,15 @@ final class TabBarController: UITabBarController {
         cartController.presenter = cartPresenter
         let cartNavigationController = UINavigationController(rootViewController: cartController)
         cartController.tabBarItem = cartTabBarItem
-        
-        viewControllers = [profileController, nftCatalogViewController, cartNavigationController]
+
+        let statisticsVeiwController = StatisticsViewController(
+            servicesAssembly: servicesAssembly
+        )
+        statisticsVeiwController.tabBarItem = statisticsTabBarItem
+
+        viewControllers = [profileController, nftCatalogViewController, cartNavigationController, statisticsVeiwController]
         tabBar.unselectedItemTintColor = UIColor(named: "darkObjectColor")
-        
+
         view.backgroundColor = .systemBackground
         tabBar.unselectedItemTintColor = .closeButton
     }
