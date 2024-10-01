@@ -192,7 +192,7 @@
 - стоимость NFT (в ETH);
 - кнопку добавления NFT в корзину / удаления NFT из корзины.
 
-[Демонстрация корзины](https://drive.google.com/file/d/1H7TECYpnDy1JNQzUIOyoNeVqpn2HiXwF/view?usp=sharing)
+[Демонстрация статистики](https://drive.google.com/file/d/1H7TECYpnDy1JNQzUIOyoNeVqpn2HiXwF/view?usp=sharing)
 
 
 # Сортировка данных
